@@ -5,7 +5,16 @@
 #ifndef NIBBLER_NIBBLER_H
 #define NIBBLER_NIBBLER_H
 
+#ifdef WIN32
+    #include <direct.h>
+    #include <windows.h>
+#else
+    #include <dlfcn.h>
+    #include <sys/types.h>
+#endif
+
 #include <iostream>
-#include <dlfcn.h>
+#include "entity.class.hpp"
+#include "window.class.hpp"
 
 #endif //NIBBLER_NIBBLER_H
