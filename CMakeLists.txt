@@ -16,7 +16,7 @@ include_directories(includes)
 file(GLOB LIBS1 "libs/src/lib1/*.cpp")
 file(GLOB LIBS2 "libs/src/lib2/*.cpp")
 file(GLOB LIBS3 "libs/src/lib3/*.cpp")
-add_library(lib1 SHARED ${LIBS1})
+add_library(lib1 SHARED ${LIBS1} libs/src/lib1/render.cpp libs/src/lib1/lib1.h)
 add_library(lib2 SHARED ${LIBS2})
 add_library(lib3 SHARED ${LIBS3})
 

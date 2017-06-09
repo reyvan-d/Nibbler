@@ -6,5 +6,6 @@
 #define NIBBLER_NIBBLER_H
 
 #include <iostream>
+#include <dlfcn.h>
 
 #endif //NIBBLER_NIBBLER_H
