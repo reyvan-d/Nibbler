@@ -6,8 +6,6 @@
 
 int main()
 {
-    std::cout << "CMake working!" << std::endl;
-    std::cout << "Debugger working!" << std::endl;
     return 0;
 }
 

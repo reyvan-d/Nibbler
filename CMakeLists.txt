@@ -20,6 +20,13 @@ add_library(lib1 SHARED ${LIBS1})
 add_library(lib2 SHARED ${LIBS2})
 add_library(lib3 SHARED ${LIBS3})
 
+set(LINK_LIB1 lib1)
+set(LINK_LIB2 lib2)
+set(LINK_LIB3 lib3)
+
 #executable
 file(GLOB SOURCES "src/*.cpp")
 add_executable(nibbler ${SOURCES})
+target_link_libraries(nibbler ${LINK_LIB1})
+target_link_libraries(nibbler ${LINK_LIB2})
+target_link_libraries(nibbler ${LINK_LIB3})
