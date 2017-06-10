@@ -4,7 +4,7 @@
 
 #include "lib2.h"
 
-void ctest1(int *i)
+void render(Engine * engine)
 {
-    *i=6;
+
 }

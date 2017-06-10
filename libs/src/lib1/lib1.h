@@ -5,12 +5,14 @@
 #ifndef LIB1_H
 #define LIB1_H
 
+#include "../../../includes/nibbler.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 //library code goes here
-void ctest1(int *);
+void render(Engine * engine);
 
 #ifdef __cplusplus
 }

@@ -16,7 +16,6 @@ class Player : public Entity {
         ~Player();
 
     private:
-
 };
 
 #endif

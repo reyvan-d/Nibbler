@@ -15,9 +15,8 @@ Player::Player(int xPos, int yPos) : Entity(xPos, yPos)
 
 }
 
-Player::Player(const Player& player)
+Player::Player(const Player& player) : Entity(player)
 {
-    *this = player;
 }
 
 void Player::operator = (const Player& player)

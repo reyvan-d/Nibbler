@@ -14,7 +14,8 @@
 #endif
 
 #include <iostream>
-#include "entity.class.hpp"
 #include "window.class.hpp"
+#include "engine.class.hpp"
+#include "player.class.hpp"
 
 #endif //NIBBLER_NIBBLER_H

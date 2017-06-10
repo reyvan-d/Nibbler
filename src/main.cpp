@@ -4,22 +4,24 @@
 
 #include "../includes/nibbler.h"
 
-void loadLib1(Window * window)
+#ifdef _WIN32
+HINSTANCE loadLib(int key)
 {
     #ifdef _WIN32
         HINSTANCE lib_handle;
     #else
         void * lib_handle;
+        char * err;
     #endif
-    double (*fn)(int *);
-    int x;
-    char * err;
 
-    std::cout << window->getWidth() << " " << window->getHeight() << std::endl;
-    window->setWidth(10);
-    window->setHeight(15);
     #ifdef _WIN32
-        lib_handle = LoadLibrary(TEXT("liblib1.dll"));
+//    lib_handle = LoadLibrary(TEXT(("liblib" + std::to_string(key) + ".dll").c_str()));
+        if (key == 1)
+            lib_handle = LoadLibrary(TEXT("liblib1.dll"));
+        if (key == 2)
+            lib_handle = LoadLibrary(TEXT("liblib2.dll"));
+        if (key == 3)
+            lib_handle = LoadLibrary(TEXT("liblib3.dll"));
         if (!lib_handle)
         {
             std::cerr << "Cannot load library: " << TEXT("Lib1") << std::endl;
@@ -27,15 +29,7 @@ void loadLib1(Window * window)
         }
         else
             std::cout << "Lib1 loaded" << std::endl;
-        fn = reinterpret_cast<double(*)(int*)>(GetProcAddress(lib_handle, "ctest1"));
-        if (!fn)
-        {
-            std::cerr << "Cannot load symbol ctest1" << GetLastError() << std::endl;
-        }
-        (*fn)(&x);
-        std::cout << "Val x = " << x << std::endl;
-        FreeLibrary(lib_handle);
-        std::cout << "Lib1 closed" << std::endl;
+        return lib_handle;
     #else
         lib_handle = dlopen("libs/liblib1.so", RTLD_LAZY);
         if (!lib_handle)
@@ -56,118 +50,37 @@ void loadLib1(Window * window)
         dlclose(lib_handle);
         std::cout << "Lib1 closed" << std::endl;
     #endif
-    std::cout << window->getWidth() << " " << window->getHeight() << std::endl;
 }
 
-void loadLib2(Window * window)
+#else
+
+#endif
+
+void unloadLib(Engine* engine)
 {
     #ifdef _WIN32
-        HINSTANCE lib_handle;
+        FreeLibrary(engine->getLibHandle());
+        engine->setLib(0);
+        std::cout << "Lib closed" << std::endl;
     #else
-        void * lib_handle;
+        dlclose(engine->getLibHandle());
+        engine->setLib(0);
+        std::cout << "Lib closed" << std::endl;
     #endif
-    double (*fn)(int *);
-    int x;
-    char * err;
-
-    std::cout << window->getWidth() << " " << window->getHeight() << std::endl;
-    window->setWidth(10);
-    window->setHeight(15);
-    #ifdef _WIN32
-        lib_handle = LoadLibrary(TEXT("liblib2.dll"));
-        if (!lib_handle)
-        {
-            std::cerr << "Cannot load library: " << TEXT("Lib2") << std::endl;
-            exit(1);
-        }
-        else
-            std::cout << "Lib2 loaded" << std::endl;
-        fn = reinterpret_cast<double(*)(int*)>(GetProcAddress(lib_handle, "ctest1"));
-        if (!fn)
-        {
-            std::cerr << "Cannot load symbol ctest1" << GetLastError() << std::endl;
-        }
-        (*fn)(&x);
-        std::cout << "Val x = " << x << std::endl;
-        FreeLibrary(lib_handle);
-        std::cout << "Lib2 closed" << std::endl;
-    #else
-        lib_handle = dlopen("libs/liblib2.so", RTLD_LAZY);
-        if (!lib_handle)
-        {
-            std::cerr << dlerror() << std::endl;
-            exit(1);
-        }
-        else
-            std::cout << "Lib2 loaded" << std::endl;
-        fn = reinterpret_cast<double(*)(int*)>(dlsym(lib_handle, "ctest1"));
-        if ((err = dlerror()) != NULL)
-        {
-            std::cerr << err << std::endl;
-            exit(1);
-        }
-        (*fn)(&x);
-        std::cout << "Val x = " << x << std::endl;
-        dlclose(lib_handle);
-        std::cout << "Lib2 closed" << std::endl;
-    #endif
-    std::cout << window->getWidth() << " " << window->getHeight() << std::endl;
 }
 
-void loadLib3(Window * window)
+void update(Engine* engine)
 {
-    #ifdef _WIN32
-        HINSTANCE lib_handle;
-    #else
-        void * lib_handle;
-    #endif
     double (*fn)(int *);
     int x;
-    char * err;
 
-    std::cout << window->getWidth() << " " << window->getHeight() << std::endl;
-    window->setWidth(5);
-    window->setHeight(5);
-    #ifdef _WIN32
-        lib_handle = LoadLibrary(TEXT("liblib3.dll"));
-        if (!lib_handle)
-        {
-            std::cerr << "Cannot load library: " << TEXT("Lib3") << std::endl;
-            exit(1);
-        }
-        else
-            std::cout << "Lib3 loaded" << std::endl;
-        fn = reinterpret_cast<double(*)(int*)>(GetProcAddress(lib_handle, "ctest1"));
-        if (!fn)
-        {
-            std::cerr << "Cannot load symbol ctest1" << GetLastError() << std::endl;
-        }
-        (*fn)(&x);
-        std::cout << "Val x = " << x << std::endl;
-        FreeLibrary(lib_handle);
-        std::cout << "Lib3 closed" << std::endl;
-    #else
-        lib_handle = dlopen("libs/liblib3.so", RTLD_LAZY);
-        if (!lib_handle)
-        {
-            std::cerr << dlerror() << std::endl;
-            exit(1);
-        }
-        else
-            std::cout << "Lib3 loaded" << std::endl;
-        fn = reinterpret_cast<double(*)(int*)>(dlsym(lib_handle, "ctest1"));
-        if ((err = dlerror()) != NULL)
-        {
-            std::cerr << err << std::endl;
-            exit(1);
-        }
-        (*fn)(&x);
-        std::cout << "Val x = " << x << std::endl;
-        dlclose(lib_handle);
-        std::cout << "Lib3 closed" << std::endl;
-    #endif
-    std::cout << window->getWidth() << " " << window->getHeight() << std::endl;
-
+    fn = reinterpret_cast<double(*)(int*)>(GetProcAddress(engine->getLibHandle(), "render"));
+    if (!fn)
+    {
+        std::cerr << "Cannot load symbol render" << GetLastError() << std::endl;
+    }
+    (*fn)(&x);
+    std::cout << "Val x = " << x << std::endl;
 }
 
 int main(int ac, char * av[])
@@ -180,14 +93,107 @@ int main(int ac, char * av[])
     }
     width = atoi(av[1]);
     height = atoi(av[2]);
-    Window * window = new Window(width, height);
-    std::cout << "Window generated with a width of " << window->getWidth() << " and a height of " << window->getHeight() << " sections." << std::endl;
+    Engine * engine = new Engine(width, height, width/2, height/2);
+    engine->setLibHandle(loadLib(1));
+    engine->setLib(1);
 
-    loadLib1(window);
-    loadLib2(window);
-    loadLib3(window);
-    std::cout << "Window modified to a width of " << window->getWidth() << " and a height of " << window->getHeight() << " sections." << std::endl;
+    while (engine->getLib() != 0) {
 
+        while(engine->getLib() == 1)
+        {
+            if (engine->getKey() != 1 && engine->getKey() != 0) {
+                if (engine->getKey() == 2 || engine->getKey() == 3)
+                {
+                    unloadLib(engine);
+                    engine->setLibHandle(loadLib(engine->getKey()));
+                    engine->setLib(engine->getKey());
+                    engine->setKey(0);
+                    break;
+                }
+                if (engine->getKey() == -1)
+                {
+                    unloadLib(engine);
+                    return 0;
+                }
+            }
+            else
+            {
+                update(engine);
+                engine->setKey(0);
+            }
+        }
+
+        while(engine->getLib() == 2)
+        {
+            if (engine->getKey() != 2 && engine->getKey() != 0) {
+                if (engine->getKey() == 1 || engine->getKey() == 3)
+                {
+                    unloadLib(engine);
+                    engine->setLibHandle(loadLib(engine->getKey()));
+                    engine->setLib(engine->getKey());
+                    engine->setKey(0);
+                    break;
+                }
+                if (engine->getKey() == -1)
+                {
+                    unloadLib(engine);
+                    return 0;
+                }
+            }
+            else
+            {
+                update(engine);
+                engine->setKey(0);
+            }
+        }
+
+        while(engine->getLib() == 3)
+        {
+            if (engine->getKey() != 3 && engine->getKey() != 0) {
+                if (engine->getKey() == 1 || engine->getKey() == 2)
+                {
+                    unloadLib(engine);
+                    engine->setLibHandle(loadLib(engine->getKey()));
+                    engine->setLib(engine->getKey());
+                    engine->setKey(0);
+                    break;
+                }
+                if (engine->getKey() == -1)
+                {
+                    unloadLib(engine);
+                    return 0;
+                }
+            }
+            else
+            {
+                update(engine);
+                engine->setKey(0);
+            }
+        }
+
+//        while(engine->getLib() == 3)
+//        {
+//            if (engine->getKey() != 3 && engine->getKey() != 0) {
+//                if (engine->getKey() == 1 || engine->getKey() == 2)
+//                {
+//                    unloadLib(engine);
+//                    loadLib(engine->getKey());
+//                    engine->setLib(engine->getKey());
+//                    engine->setKey(0);
+//                    break;
+//                }
+//                if (engine->getKey() == -1)
+//                {
+//                    return 0;
+//                }
+//            }
+//            else
+//            {
+//                update(engine);
+//                engine->setKey(0);
+//            }
+//        }
+    }
     return 0;
 }
 
