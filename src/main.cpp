@@ -6,7 +6,7 @@
 
 void loadLib1(Window * window)
 {
-    #ifdef WIN32
+    #ifdef _WIN32
         HINSTANCE lib_handle;
     #else
         void * lib_handle;
@@ -18,7 +18,7 @@ void loadLib1(Window * window)
     std::cout << window->getWidth() << " " << window->getHeight() << std::endl;
     window->setWidth(10);
     window->setHeight(15);
-    #ifdef WIN32
+    #ifdef _WIN32
         lib_handle = LoadLibrary(TEXT("liblib1.dll"));
         if (!lib_handle)
         {
@@ -61,7 +61,7 @@ void loadLib1(Window * window)
 
 void loadLib2(Window * window)
 {
-    #ifdef WIN32
+    #ifdef _WIN32
         HINSTANCE lib_handle;
     #else
         void * lib_handle;
@@ -73,7 +73,7 @@ void loadLib2(Window * window)
     std::cout << window->getWidth() << " " << window->getHeight() << std::endl;
     window->setWidth(10);
     window->setHeight(15);
-    #ifdef WIN32
+    #ifdef _WIN32
         lib_handle = LoadLibrary(TEXT("liblib2.dll"));
         if (!lib_handle)
         {
@@ -116,7 +116,7 @@ void loadLib2(Window * window)
 
 void loadLib3(Window * window)
 {
-    #ifdef WIN32
+    #ifdef _WIN32
         HINSTANCE lib_handle;
     #else
         void * lib_handle;
@@ -128,7 +128,7 @@ void loadLib3(Window * window)
     std::cout << window->getWidth() << " " << window->getHeight() << std::endl;
     window->setWidth(5);
     window->setHeight(5);
-    #ifdef WIN32
+    #ifdef _WIN32
         lib_handle = LoadLibrary(TEXT("liblib3.dll"));
         if (!lib_handle)
         {
