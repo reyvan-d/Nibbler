@@ -7,7 +7,7 @@
 void loadLib1(Window * window)
 {
     #ifdef WIN32
-        HINSTANCE lib_handle
+        HINSTANCE lib_handle;
     #else
         void * lib_handle;
     #endif
@@ -19,20 +19,20 @@ void loadLib1(Window * window)
     window->setWidth(10);
     window->setHeight(15);
     #ifdef WIN32
-        lib_handle = LoadLibrary(TEXT("libs/liblib1.dll".c_str()));
+        lib_handle = LoadLibrary(TEXT("liblib1.dll"));
         if (!lib_handle)
         {
-            std::cerr << "Cannot load library: " << TEXT("Lib1".c_str()) << std::endl;
+            std::cerr << "Cannot load library: " << TEXT("Lib1") << std::endl;
             exit(1);
         }
         else
             std::cout << "Lib1 loaded" << std::endl;
-        func_t* fn_handle = (func_t*) GetProcAddress(lib_handle, "ctest1");
-        if (!fn_handle)
+        fn = reinterpret_cast<double(*)(int*)>(GetProcAddress(lib_handle, "ctest1"));
+        if (!fn)
         {
             std::cerr << "Cannot load symbol ctest1" << GetLastError() << std::endl;
         }
-        (*fn_handle)(&x);
+        (*fn)(&x);
         std::cout << "Val x = " << x << std::endl;
         FreeLibrary(lib_handle);
         std::cout << "Lib1 closed" << std::endl;
@@ -62,7 +62,7 @@ void loadLib1(Window * window)
 void loadLib2(Window * window)
 {
     #ifdef WIN32
-        HINSTANCE lib_handle
+        HINSTANCE lib_handle;
     #else
         void * lib_handle;
     #endif
@@ -74,20 +74,20 @@ void loadLib2(Window * window)
     window->setWidth(10);
     window->setHeight(15);
     #ifdef WIN32
-        lib_handle = LoadLibrary(TEXT("libs/liblib2.dll".c_str()));
+        lib_handle = LoadLibrary(TEXT("liblib2.dll"));
         if (!lib_handle)
         {
-            std::cerr << "Cannot load library: " << TEXT("Lib2".c_str()) << std::endl;
+            std::cerr << "Cannot load library: " << TEXT("Lib2") << std::endl;
             exit(1);
         }
         else
             std::cout << "Lib2 loaded" << std::endl;
-        func_t* fn_handle = (func_t*) GetProcAddress(lib_handle, "ctest1");
-        if (!fn_handle)
+        fn = reinterpret_cast<double(*)(int*)>(GetProcAddress(lib_handle, "ctest1"));
+        if (!fn)
         {
             std::cerr << "Cannot load symbol ctest1" << GetLastError() << std::endl;
         }
-        (*fn_handle)(&x);
+        (*fn)(&x);
         std::cout << "Val x = " << x << std::endl;
         FreeLibrary(lib_handle);
         std::cout << "Lib2 closed" << std::endl;
@@ -117,7 +117,7 @@ void loadLib2(Window * window)
 void loadLib3(Window * window)
 {
     #ifdef WIN32
-        HINSTANCE lib_handle
+        HINSTANCE lib_handle;
     #else
         void * lib_handle;
     #endif
@@ -126,20 +126,20 @@ void loadLib3(Window * window)
     char * err;
 
     #ifdef WIN32
-        lib_handle = LoadLibrary(TEXT("libs/liblib3.dll".c_str()));
+        lib_handle = LoadLibrary(TEXT("liblib3.dll"));
         if (!lib_handle)
         {
-            std::cerr << "Cannot load library: " << TEXT("Lib3".c_str()) << std::endl;
+            std::cerr << "Cannot load library: " << TEXT("Lib3") << std::endl;
             exit(1);
         }
         else
             std::cout << "Lib3 loaded" << std::endl;
-        func_t* fn_handle = (func_t*) GetProcAddress(lib_handle, "ctest1");
-        if (!fn_handle)
+        fn = reinterpret_cast<double(*)(int*)>(GetProcAddress(lib_handle, "ctest1"));
+        if (!fn)
         {
             std::cerr << "Cannot load symbol ctest1" << GetLastError() << std::endl;
         }
-        (*fn_handle)(&x);
+        (*fn)(&x);
         std::cout << "Val x = " << x << std::endl;
         FreeLibrary(lib_handle);
         std::cout << "Lib3 closed" << std::endl;
