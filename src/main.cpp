@@ -37,7 +37,7 @@ void loadLib1(Window * window)
         FreeLibrary(lib_handle);
         std::cout << "Lib1 closed" << std::endl;
     #else
-        lib_handle = dlopen("libs/liblib1.dylib", RTLD_LAZY);
+        lib_handle = dlopen("libs/liblib1.so", RTLD_LAZY);
         if (!lib_handle)
         {
             std::cerr << dlerror() << std::endl;
@@ -92,7 +92,7 @@ void loadLib2(Window * window)
         FreeLibrary(lib_handle);
         std::cout << "Lib2 closed" << std::endl;
     #else
-        lib_handle = dlopen("libs/liblib2.dylib", RTLD_LAZY);
+        lib_handle = dlopen("libs/liblib2.so", RTLD_LAZY);
         if (!lib_handle)
         {
             std::cerr << dlerror() << std::endl;
@@ -125,6 +125,9 @@ void loadLib3(Window * window)
     int x;
     char * err;
 
+    std::cout << window->getWidth() << " " << window->getHeight() << std::endl;
+    window->setWidth(5);
+    window->setHeight(5);
     #ifdef WIN32
         lib_handle = LoadLibrary(TEXT("liblib3.dll"));
         if (!lib_handle)
@@ -144,7 +147,7 @@ void loadLib3(Window * window)
         FreeLibrary(lib_handle);
         std::cout << "Lib3 closed" << std::endl;
     #else
-        lib_handle = dlopen("libs/liblib3.dylib", RTLD_LAZY);
+        lib_handle = dlopen("libs/liblib3.so", RTLD_LAZY);
         if (!lib_handle)
         {
             std::cerr << dlerror() << std::endl;
