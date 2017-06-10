@@ -15,14 +15,19 @@ class Engine {
         void operator = (const Engine& engine);
         ~Engine();
 
-        Window* getWindow();
+        Window *getWindow();
         int getKey();
         int getLib();
         void setLib(int lib);
         void setKey(int key);
-        void setLibHandle(HINSTANCE lib_handle);
-        void setLibHandle(void * lib_handle);
-        HINSTANCE getLibHandle();
+
+        #ifdef _WIN32
+            void setLibHandle(HINSTANCE lib_handle);
+            HINSTANCE getLibHandle();
+        #else
+            void setLibHandle(void *lib_handle);
+            void *getLibHandle();
+        #endif
     protected:
         Window* window;
         int key;
@@ -30,7 +35,7 @@ class Engine {
         #ifdef _WIN32
             HINSTANCE lib_handle;
         #else
-            void * lib_handle;
+            void* lib_handle;
         #endif
 };
 
