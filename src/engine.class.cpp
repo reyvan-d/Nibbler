@@ -17,7 +17,7 @@ Engine::Engine(int width, int height, int pxPos, int pyPos)
     this->window = new Window(width, height);
     this->cLib = 1;
     this->key = 0;
-    Player * player = new Player(pxPos, pyPos);
+    Player *player = new Player(pxPos, pyPos);
 }
 
 Engine::Engine(const Engine& engine)
