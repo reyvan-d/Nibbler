@@ -35,11 +35,11 @@ void    *loadLib(int key)//linux
 
 //        lib_handle = dlopen(((std::string)"libs/liblib" + std::to_string(key) + (std::string)".so").c_str(), RTLD_LAZY);//works
         if (key == 1)
-            lib_handle = dlopen("libs/liblib1.so", RTLD_LAZY);//lib_handle = LoadLibrary(TEXT("liblib1.dll"));
+            lib_handle = dlopen("libs/liblib1.dylib", RTLD_LAZY);//lib_handle = LoadLibrary(TEXT("liblib1.dll"));
         if (key == 2)
-            lib_handle = dlopen("libs/liblib2.so", RTLD_LAZY);//lib_handle = LoadLibrary(TEXT("liblib2.dll"));
+            lib_handle = dlopen("libs/liblib2.dylib", RTLD_LAZY);//lib_handle = LoadLibrary(TEXT("liblib2.dll"));
         if (key == 3)
-            lib_handle = dlopen("libs/liblib3.so", RTLD_LAZY);//lib_handle = LoadLibrary(TEXT("liblib3.dll"));
+            lib_handle = dlopen("libs/liblib3.dylib", RTLD_LAZY);//lib_handle = LoadLibrary(TEXT("liblib3.dll"));
         if (!lib_handle)
         {
             std::cerr << dlerror() << std::endl;
@@ -79,9 +79,19 @@ void update(Engine* engine)
             std::cerr << "Cannot load symbol render" << GetLastError() << std::endl;
         #else
 
-            std::cerr << "cannot load symbol render" << dlerror() << std::endl;
+            std::cerr << "cannot load symbol render " << dlerror() << std::endl;
         #endif
     }
+    (*fn)(engine);
+}
+
+void initializeSDL(Engine * engine)
+{
+    double (*fn)(Engine *);
+
+    fn = reinterpret_cast<double(*)(Engine*)>(dlsym(engine->getLibHandle(), "initialize"));
+    if (!fn)
+        std::cerr << "Cannot load symbol initialize " << dlerror() << std::endl;
     (*fn)(engine);
 }
 
@@ -98,13 +108,19 @@ int main(int ac, char * av[])
     width = atoi(av[1]);
     height = atoi(av[2]);
     Engine * engine = new Engine(width, height, width/2, height/2);
-    engine->setLibHandle(loadLib(2));//only defined in #ifdef _WIN32; have to make it for linux.
-    engine->setLib(2);
+    engine->setLibHandle(loadLib(1));//only defined in #ifdef _WIN32; have to make it for linux.
+    engine->setLib(1);
 
     while (engine->getLib() != 0)
     {
         while (engine->getLib() == 1)
         {
+            if (!engine->getLib1())
+            {
+                initializeSDL(engine);
+                engine->setLib1(true);
+            }
+
             if (engine->getKey() != 1 && engine->getKey() != 0)
             {
                 if (engine->getKey() == 2 || engine->getKey() == 3)
@@ -118,6 +134,7 @@ int main(int ac, char * av[])
                 if (engine->getKey() == -1)
                 {
                     unloadLib(engine);
+                    engine->setLib1(false);
                     return 0;
                 }
             }
