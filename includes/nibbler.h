@@ -14,6 +14,7 @@
 #endif
 
 #include <iostream>
+#include <SDL.h>
 #include "window.class.hpp"
 #include "engine.class.hpp"
 #include "player.class.hpp"
