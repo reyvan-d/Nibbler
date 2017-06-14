@@ -59,24 +59,12 @@ void Engine::setKey(int key)
     this->key = key;
 }
 
-#ifdef _WIN32
-    HINSTANCE Engine::getLibHandle()
-    {
-        return this->lib_handle;
-    }
+HINSTANCE Engine::getLibHandle()
+{
+    return this->lib_handle;
+}
 
-    void Engine::setLibHandle(HINSTANCE lib_handle)
-    {
-        this->lib_handle = lib_handle;
-    }
-#else
-    void * Engine::getLibHandle()
-    {
-        return this->lib_handle;
-    }
-
-    void Engine::setLibHandle(void * lib_handle)
-    {
-        this->lib_handle = lib_handle;
-    }
-#endif
+void Engine::setLibHandle(HINSTANCE lib_handle)
+{
+    this->lib_handle = lib_handle;
+}

@@ -28,7 +28,7 @@ set(LINK_LIB3 lib3)
 #executable
 file(GLOB SOURCES "src/*.cpp")
 add_executable(nibbler ${SOURCES})
-# target_link_libraries(nibbler dl)
+# target_link_libraries(nibbler dl) #linux include: -ldl
 target_link_libraries(nibbler ${LINK_LIB1})
 target_link_libraries(nibbler ${LINK_LIB2})
 target_link_libraries(nibbler ${LINK_LIB3})

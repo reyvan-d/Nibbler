@@ -6,5 +6,5 @@
 
 void render(Engine * engine)
 {
-
+    std::cout << "lib2\n";
 }

@@ -7,7 +7,8 @@
 
 #include "entity.class.hpp"
 
-class Player : public Entity {
+class Player : public Entity
+{//this is most likely the worm :| ; thus any variables like speed, direction and length (etc) should probably go here.
     public:
         Player();
         Player(int xPos, int yPos);

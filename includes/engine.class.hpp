@@ -21,22 +21,13 @@ class Engine {
         void setLib(int lib);
         void setKey(int key);
 
-        #ifdef _WIN32
-            void setLibHandle(HINSTANCE lib_handle);
-            HINSTANCE getLibHandle();
-        #else
-            void setLibHandle(void *lib_handle);
-            void *getLibHandle();
-        #endif
+        void setLibHandle(HINSTANCE lib_handle);
+        HINSTANCE getLibHandle();
     protected:
         Window* window;
         int key;
         int cLib;
-        #ifdef _WIN32
-            HINSTANCE lib_handle;
-        #else
-            void* lib_handle;
-        #endif
+        HINSTANCE lib_handle;
 };
 
 #endif

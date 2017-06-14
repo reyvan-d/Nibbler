@@ -4,7 +4,7 @@
 
 #include "lib3.h"
 
-void render(Engine * engine)
+void    render(Engine *engine)
 {
-
+    std::cout << "lib3\n";
 }

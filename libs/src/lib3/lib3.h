@@ -6,6 +6,8 @@
 #define LIB3_H
 
 #include "../../../includes/nibbler.h"
+#include <iostream>
+#include <ncurses.h>
 
 #ifdef __cplusplus
 extern "C" {
