@@ -76,7 +76,7 @@ void update(Engine* engine)
     if (!fn)
     {
         #ifdef _WIN32
-            std::cerr << "Cannot load symbol render" << GetLastError() << std::endl;
+            std::cerr << "Cannot load symbol render " << GetLastError() << std::endl;
         #else
 
             std::cerr << "cannot load symbol render " << dlerror() << std::endl;
@@ -87,12 +87,21 @@ void update(Engine* engine)
 
 void initializeSDL(Engine * engine)
 {
-    double (*fn)(Engine *);
+    renderData rdata;
+    double (*fn)(renderData);
 
+    rdata.winWidth = engine->getWindow()->getWidth();
+    rdata.winHeight = engine->getWindow()->getHeight();
+    #ifdef _WIN32
+    fn = reinterpret_cast<double(*)(renderData)>(GetProcAddress(engine->getLibHandle(), "initialize"));
+    if (!fn)
+        std::cerr << "Cannot load symbol initialize " << GetLastError() << std::endl;
+    #else
     fn = reinterpret_cast<double(*)(Engine*)>(dlsym(engine->getLibHandle(), "initialize"));
     if (!fn)
         std::cerr << "Cannot load symbol initialize " << dlerror() << std::endl;
-    (*fn)(engine);
+    #endif
+    (*fn)(rdata);
 }
 
 int main(int ac, char * av[])

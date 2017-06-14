@@ -12,10 +12,25 @@ extern "C" {
 #endif
 
 //library code goes here
-void render(Engine * engine);
+#ifdef _WIN32
+__declspec(dllexport) void initialize(renderData rdata);
+__declspec(dllexport) void render(Engine * engine);
+#else
+
+//Add exported functions for OSX
+
+#endif
 
 #ifdef __cplusplus
 }
 #endif
+
+//struct data
+//{
+//    int winWidth;
+//    int winHeight;
+//    int playerPosX;
+//    int playerPosY;
+//};
 
 #endif
