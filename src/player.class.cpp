@@ -29,3 +29,13 @@ Player::~Player()
 {
 
 }
+
+int Player::getPosX()
+{
+    return this->xPos;
+}
+
+int Player::getPosY()
+{
+    return this->yPos;
+}

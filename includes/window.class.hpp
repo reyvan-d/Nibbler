@@ -15,11 +15,17 @@ class Window {
 
         int getWidth();
         int getHeight();
+        int getObjWidth();
+        int getObjHeight();
         void setWidth(int width);
         void setHeight(int height);
+        void setObjWidth(int width);
+        void setObjHeight(int height);
     private:
         int width;
         int height;
+        int objWidth;
+        int objHeight;
 };
 
 #endif

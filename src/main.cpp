@@ -5,6 +5,8 @@
 
 #include "../includes/nibbler.h"
 
+renderData rdata;
+
 #ifdef _WIN32
 HINSTANCE loadLib(int key)
 {
@@ -66,12 +68,12 @@ void unloadLib(Engine* engine)
 
 void update(Engine* engine)
 {
-    double (*fn)(Engine *);
+    double (*fn)(renderData);
 
     #ifdef _WIN32
         fn = reinterpret_cast<double(*)(Engine*)>(GetProcAddress(engine->getLibHandle(), "render"));
     #else
-        fn = reinterpret_cast<double(*)(Engine*)>(dlsym(engine->getLibHandle(), "render"));
+        fn = reinterpret_cast<double(*)(renderData)>(dlsym(engine->getLibHandle(), "render"));
     #endif
     if (!fn)
     {
@@ -82,22 +84,25 @@ void update(Engine* engine)
             std::cerr << "cannot load symbol render " << dlerror() << std::endl;
         #endif
     }
-    (*fn)(engine);
+    (*fn)(rdata);
 }
 
-void initializeSDL(Engine * engine)
+void initializeSDL(Engine * engine, Player * player)
 {
-    renderData rdata;
     double (*fn)(renderData);
 
-    rdata.winWidth = engine->getWindow()->getWidth();
-    rdata.winHeight = engine->getWindow()->getHeight();
+    rdata.winWidth = 640;
+    rdata.winHeight = 480;
+    rdata.objWidth = 480 / engine->getWindow()->getObjWidth();
+    rdata.objHeight = 480 / engine->getWindow()->getObjHeight();
+    rdata.playerPosX = player->getPosX();
+    rdata.playerPosY = player->getPosY();
     #ifdef _WIN32
     fn = reinterpret_cast<double(*)(renderData)>(GetProcAddress(engine->getLibHandle(), "initialize"));
     if (!fn)
         std::cerr << "Cannot load symbol initialize " << GetLastError() << std::endl;
     #else
-    fn = reinterpret_cast<double(*)(Engine*)>(dlsym(engine->getLibHandle(), "initialize"));
+    fn = reinterpret_cast<double(*)(renderData)>(dlsym(engine->getLibHandle(), "initialize"));
     if (!fn)
         std::cerr << "Cannot load symbol initialize " << dlerror() << std::endl;
     #endif
@@ -117,6 +122,7 @@ int main(int ac, char * av[])
     width = atoi(av[1]);
     height = atoi(av[2]);
     Engine * engine = new Engine(width, height, width/2, height/2);
+    Player * player = new Player(width/2, height/2);
     engine->setLibHandle(loadLib(1));//only defined in #ifdef _WIN32; have to make it for linux.
     engine->setLib(1);
 
@@ -126,7 +132,7 @@ int main(int ac, char * av[])
         {
             if (!engine->getLib1())
             {
-                initializeSDL(engine);
+                initializeSDL(engine, player);
                 engine->setLib1(true);
             }
 

@@ -18,6 +18,8 @@ __declspec(dllexport) void render(Engine * engine);
 #else
 
 //Add exported functions for OSX
+void initialize(renderData rdata);
+void render(renderData rdata);
 
 #endif
 
