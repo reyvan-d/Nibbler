@@ -6,11 +6,11 @@
 
 Window::Window()
 {
-    this->width = 25;
-    this->height = 25;
+    this->objWidth = 25;
+    this->objHeight = 25;
 }
 
-Window::Window(int width, int height) : width(width), height(height)
+Window::Window(int width, int height) : objWidth(width), objHeight(height)
 {
 
 }
@@ -22,8 +22,8 @@ Window::Window(const Window& window)
 
 void Window::operator = (const Window& window)
 {
-    this->width = window.width;
-    this->height = window.height;
+    this->objWidth = window.objWidth;
+    this->objHeight = window.objHeight;
 }
 
 Window::~Window()
@@ -41,6 +41,16 @@ int Window::getHeight()
     return this->height;
 }
 
+int Window::getObjWidth()
+{
+    return this->objWidth;
+}
+
+int Window::getObjHeight()
+{
+    return this->objHeight;
+}
+
 void Window::setWidth(int width)
 {
     this->width = width;
@@ -49,4 +59,14 @@ void Window::setWidth(int width)
 void Window::setHeight(int height)
 {
     this->height = height;
+}
+
+void Window::setObjWidth(int width)
+{
+    this->objWidth = width;
+}
+
+void Window::setObjHeight(int height)
+{
+    this->objHeight = height;
 }

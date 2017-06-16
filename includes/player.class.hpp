@@ -15,6 +15,8 @@ class Player : public Entity {
         void operator = (const Player& player);
         ~Player();
 
+        int getPosX();
+        int getPosY();
     private:
 };
 

@@ -33,6 +33,9 @@ struct renderData
     int winHeight;
     int playerPosX;
     int playerPosY;
+    int objWidth;
+    int objHeight;
+    int playerDirection;
 };
 
 #endif //NIBBLER_NIBBLER_H

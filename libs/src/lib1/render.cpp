@@ -15,8 +15,7 @@ void initialize(renderData rdata) {
         std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
         return;
     }
-    win = SDL_CreateWindow("Nibbler", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, rdata.winWidth, rdata.winHeight,
-                           SDL_WINDOW_SHOWN);
+    win = SDL_CreateWindow("Nibbler", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_SHOWN);
     if (win == nullptr) {
         std::cout << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
@@ -24,7 +23,6 @@ void initialize(renderData rdata) {
     }
     ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
     if (ren == nullptr) {
-        //SDL_DestroyWindow(win);
         cleanup(win);
         std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
@@ -32,8 +30,6 @@ void initialize(renderData rdata) {
     }
     bmp = SDL_LoadBMP("../Crab Nebula.bmp");
     if (bmp == nullptr) {
-        //SDL_DestroyRenderer(ren);
-        //SDL_DestroyWindow(win);
         cleanup(ren, win);
         std::cout << "SDL_LoadBMP Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
@@ -41,22 +37,26 @@ void initialize(renderData rdata) {
     }
     tex = SDL_CreateTextureFromSurface(ren, bmp);
     SDL_FreeSurface(bmp);
-    if (tex == nullptr)
-    {
-        //SDL_DestroyRenderer(ren);
-        //SDL_DestroyWindow(win);
+    if (tex == nullptr) {
         cleanup(bmp, ren, win);
         std::cout << "SDL_CreateTextureFromSurface Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
-        return ;
+        return;
     }
     SDL_RenderClear(ren);
     SDL_RenderCopy(ren, tex, NULL, NULL);
+    SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+    SDL_Rect r;
+    r.x = rdata.playerPosX * rdata.objWidth;
+    // r.x = (480 / 2) - (rdata.objWidth / 2);
+    r.y = rdata.playerPosY * rdata.objHeight;
+    r.w = rdata.objWidth;
+    r.h = rdata.objHeight;
+    SDL_RenderFillRect(ren, &r);
     SDL_RenderPresent(ren);
-
 }
 
-void render(Engine *engine)
+void render(renderData rdata)
 {
 
 }
