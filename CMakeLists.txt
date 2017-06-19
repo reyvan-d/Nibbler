@@ -13,12 +13,16 @@ set(CMAKE_PREFIX_PATH "~/")
 set(CMAKE_CXX_FLAGS "-std=c++11")
 
 #Windows
-set(SDL2_INCLUDE_DIR "C:/SDL/i686-w64-mingw32/include/SDL2")
-set(SDL2_LIBRARY "C:/SDL/i686-w64-mingw32/lib/libSDL2.a")
+#set(SDL2_INCLUDE_DIR "C:/SDL/i686-w64-mingw32/include/SDL2")
+#set(SDL2_LIBRARY "C:/SDL/i686-w64-mingw32/lib/libSDL2.a")
 
 #OSX
-#set(SDL2_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/SDL2")
-#set(SDL2_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libSDL2.dylib")
+set(SDL2_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/SDL2")
+set(SDL2_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libSDL2.dylib")
+
+#Linux
+#set(SDL2_INCLUDE_DIR "/usr/include/SDL2")
+
 
 include_directories(includes ${SDL2_INCLUDE_DIR})
 
@@ -38,15 +42,16 @@ set(LINK_LIB3 lib3)
 file(GLOB SOURCES "src/*.cpp")
 add_executable(nibbler ${SOURCES})
 
-#Linux
-#target_link_libraries(nibbler dl)
-
 #Windows
-target_link_libraries(${LINK_LIB1} ${SDL2_LIBRARY} mingw32 m dinput8 dxguid dxerr8 user32 winmm imm32 ole32 oleaut32 shell32 version uuid)
+#target_link_libraries(${LINK_LIB1} ${SDL2_LIBRARY} mingw32 m dinput8 dxguid dxerr8 user32 winmm imm32 ole32 oleaut32 shell32 version uuid)
 
 #OSX
-#target_link_libraries(${LINK_LIB1} ${SDL2_LIBRARY})
-#target_link_libraries(${LINK_LIB1} ${SDL2_GFX_LIBRARY})
+target_link_libraries(${LINK_LIB1} ${SDL2_LIBRARY})
+target_link_libraries(${LINK_LIB1} ${SDL2_GFX_LIBRARY})
+
+#Linux
+#target_link_libraries(nibbler dl)
+#target_link_libraries(${LINK_LIB1} SDL2)
 
 #Generic
 #target_link_libraries(nibbler ${SDL2_LIBRARY})
