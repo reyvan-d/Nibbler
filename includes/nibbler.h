@@ -6,6 +6,7 @@
 #define NIBBLER_NIBBLER_H
 
 #include <iostream>
+#include <unistd.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,7 +36,8 @@ struct renderData
     int playerPosY;
     int objWidth;
     int objHeight;
-    int playerDirection;
+    int playerXDirection;
+    int playerYDirection;
 };
 
 #endif //NIBBLER_NIBBLER_H

@@ -17,7 +17,15 @@ class Player : public Entity {
 
         int getPosX();
         int getPosY();
+        int getXDirection();
+        int getYDirection();
+        void setPosX(int posX);
+        void setPosY(int posY);
+        void setXDirection(int dirX);
+        void setYDirection(int dirY);
     private:
+        int xDirection;
+        int yDirection;
 };
 
 #endif
