@@ -15,11 +15,13 @@ extern "C" {
 #ifdef _WIN32
 __declspec(dllexport) void initialize(renderData rdata);
 __declspec(dllexport) void render(Engine * engine);
+__declspec(dllexport) void clean();
 #else
 
 //Add exported functions for OSX
 void initialize(renderData rdata);
-void render(renderData rdata);
+renderData render(renderData rdata);
+void clean();
 
 #endif
 

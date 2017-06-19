@@ -66,14 +66,36 @@ void unloadLib(Engine* engine)
     #endif
 }
 
-void update(Engine* engine)
+void destroyInstance(Engine * engine)
 {
-    double (*fn)(renderData);
+    void (*fn)(void);
 
     #ifdef _WIN32
-        fn = reinterpret_cast<double(*)(Engine*)>(GetProcAddress(engine->getLibHandle(), "render"));
+        fn = reinterpret_cast<void(*)(void)>(GetProcAddress(engine->getLibHandle(), "clean"));
     #else
-        fn = reinterpret_cast<double(*)(renderData)>(dlsym(engine->getLibHandle(), "render"));
+        fn = reinterpret_cast<void(*)(void)>(dlsym(engine->getLibHandle(), "clean"));
+    #endif
+    if (!fn)
+    {
+        #ifdef _WIN32
+            std::cerr << "Cannot load symbol clean " << GetLastError() << std::endl;
+    #else
+        std::cerr << "cannot load symbol clean " << dlerror() << std::endl;
+    #endif
+    }
+    (*fn)();
+    unloadLib(engine);
+    exit(0);
+}
+
+renderData update(Engine* engine, Player * player)
+{
+    renderData (*fn)(renderData);
+
+    #ifdef _WIN32
+        fn = reinterpret_cast<double(*)(renderData)>(GetProcAddress(engine->getLibHandle(), "render"));
+    #else
+        fn = reinterpret_cast<renderData(*)(renderData)>(dlsym(engine->getLibHandle(), "render"));
     #endif
     if (!fn)
     {
@@ -84,7 +106,14 @@ void update(Engine* engine)
             std::cerr << "cannot load symbol render " << dlerror() << std::endl;
         #endif
     }
-    (*fn)(rdata);
+    player->setPosX(player->getXDirection());
+    rdata.playerPosX = player->getPosX();
+    player->setPosY(player->getYDirection());
+    rdata.playerPosY = player->getPosY();
+    if (rdata.playerPosX < 0 || rdata.playerPosX > engine->getWindow()->getObjWidth() - 1 || rdata.playerPosY < 0 || rdata.playerPosY > engine->getWindow()->getObjHeight() - 1)
+        destroyInstance(engine);
+    rdata = (*fn)(rdata);
+    return rdata;
 }
 
 void initializeSDL(Engine * engine, Player * player)
@@ -105,7 +134,7 @@ void initializeSDL(Engine * engine, Player * player)
     fn = reinterpret_cast<double(*)(renderData)>(dlsym(engine->getLibHandle(), "initialize"));
     if (!fn)
         std::cerr << "Cannot load symbol initialize " << dlerror() << std::endl;
-    #endif
+    #endif 
     (*fn)(rdata);
 }
 
@@ -130,6 +159,7 @@ int main(int ac, char * av[])
     {
         while (engine->getLib() == 1)
         {
+            usleep(100000);
             if (!engine->getLib1())
             {
                 initializeSDL(engine, player);
@@ -155,7 +185,9 @@ int main(int ac, char * av[])
             }
             else
             {
-                update(engine);
+                rdata = update(engine, player);
+                player->setXDirection(rdata.playerXDirection);
+                player->setYDirection(rdata.playerYDirection);
                 engine->setKey(0);
             }
 
@@ -180,7 +212,7 @@ int main(int ac, char * av[])
             }
             else
             {
-                update(engine);
+                rdata = update(engine, player);
                 engine->setKey(0);
             }
         }
@@ -204,7 +236,7 @@ int main(int ac, char * av[])
             }
             else
             {
-                update(engine);
+                rdata = update(engine, player);
                 engine->setKey(0);
             }
         }
