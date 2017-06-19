@@ -5,8 +5,10 @@
 #ifndef NIBBLER_NIBBLER_H
 #define NIBBLER_NIBBLER_H
 
+#include <vector>
 #include <iostream>
 #include <unistd.h>
+#include <sys/time.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,6 +25,7 @@ extern "C" {
 #include "window.class.hpp"
 #include "engine.class.hpp"
 #include "player.class.hpp"
+#include "food.class.hpp"
 
 #ifdef __cplusplus
 }
@@ -38,6 +41,10 @@ struct renderData
     int objHeight;
     int playerXDirection;
     int playerYDirection;
+    int foodPosX;
+    int foodPosY;
+    bool dir = false;
+    std::vector<std::vector<int>> playerBody;
 };
 
 #endif //NIBBLER_NIBBLER_H

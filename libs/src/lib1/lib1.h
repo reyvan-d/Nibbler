@@ -14,7 +14,7 @@ extern "C" {
 //library code goes here
 #ifdef _WIN32
 __declspec(dllexport) void initialize(renderData rdata);
-__declspec(dllexport) void render(Engine * engine);
+__declspec(dllexport) renderData render(renderData rdata);
 __declspec(dllexport) void clean();
 #else
 

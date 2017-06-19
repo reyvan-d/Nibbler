@@ -11,7 +11,8 @@ SDL_Renderer *ren;
 SDL_Surface *bmp;
 SDL_Texture *tex;
 
-void initialize(renderData rdata) {
+void initialize(renderData rdata)
+{
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
         return;
@@ -66,6 +67,9 @@ void clean()
 
 renderData render(renderData rdata)
 {
+    int x = 0;
+    int y = 0;
+
     SDL_RenderClear(ren);
     SDL_RenderCopy(ren, tex, NULL, NULL);
     SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
@@ -73,6 +77,25 @@ renderData render(renderData rdata)
     r.x = rdata.playerPosX * rdata.objWidth;
     // r.x = (480 / 2) - (rdata.objWidth / 2);
     r.y = rdata.playerPosY * rdata.objHeight;
+    r.w = rdata.objWidth;
+    r.h = rdata.objHeight;
+    SDL_RenderFillRect(ren, &r);
+    SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
+    for (int i = 1; i <= rdata.playerBody.size(); i++)
+    {
+        r.x = rdata.playerBody[x][y] * rdata.objWidth;
+        ++y;
+        r.y = rdata.playerBody[x][y] * rdata.objHeight;
+        --y;
+        ++x;
+        r.w = rdata.objWidth;
+        r.h = rdata.objHeight;
+        SDL_RenderFillRect(ren, &r);
+    }
+    SDL_SetRenderDrawColor(ren, 0, 0, 255, 255);
+    r.x = rdata.foodPosX * rdata.objWidth;
+    // r.x = (480 / 2) - (rdata.objWidth / 2);
+    r.y = rdata.foodPosY * rdata.objHeight;
     r.w = rdata.objWidth;
     r.h = rdata.objHeight;
     SDL_RenderFillRect(ren, &r);
@@ -85,20 +108,36 @@ renderData render(renderData rdata)
                 switch(event.key.keysym.sym)
                 {
                     case SDLK_LEFT:
-                        rdata.playerXDirection = -1;
-                        rdata.playerYDirection = 0;
+                        if (rdata.playerXDirection != 1 && !rdata.dir)
+                        {
+                            rdata.playerXDirection = -1;
+                            rdata.playerYDirection = 0;
+                            rdata.dir = true;
+                        }
                         break;
                     case SDLK_RIGHT:
-                        rdata.playerXDirection = 1;
-                        rdata.playerYDirection = 0;
+                        if (rdata.playerXDirection != -1 && !rdata.dir)
+                        {
+                            rdata.playerXDirection = 1;
+                            rdata.playerYDirection = 0;
+                            rdata.dir = true;
+                        }
                         break;
                     case SDLK_UP:
-                        rdata.playerXDirection = 0;
-                        rdata.playerYDirection = -1;
+                        if (rdata.playerYDirection != 1 && !rdata.dir)
+                        {
+                            rdata.playerXDirection = 0;
+                            rdata.playerYDirection = -1;
+                            rdata.dir = true;
+                        }
                         break;
                     case SDLK_DOWN:
-                        rdata.playerXDirection = 0;
-                        rdata.playerYDirection = 1;
+                        if (rdata.playerYDirection != -1 && !rdata.dir)
+                        {
+                            rdata.playerXDirection = 0;
+                            rdata.playerYDirection = 1;
+                            rdata.dir = true;
+                        }
                         break;
                     case SDLK_ESCAPE:
                         clean();

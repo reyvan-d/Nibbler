@@ -10,6 +10,8 @@ Player::Player()
     this->yPos = 10;
     this->xDirection = 0;
     this->yDirection = -1;
+    this->bodyPart.push_back({this->xPos, this->yPos - 1});
+    this->bodyPart.push_back({this->bodyPart[0].getPosX(), this->bodyPart[0].getPosY() - 1});
 }
 
 Player::Player(int xPos, int yPos) : Entity(xPos, yPos)
@@ -71,4 +73,9 @@ void Player::setXDirection(int dirX)
 void Player::setYDirection(int dirY)
 {
     this->yDirection = dirY;
+}
+
+std::vector<Entity> Player::getBody()
+{
+    return this->bodyPart;
 }

@@ -88,12 +88,16 @@ void destroyInstance(Engine * engine)
     exit(0);
 }
 
-renderData update(Engine* engine, Player * player)
+renderData update(Engine* engine, Player * player, Food * food)
 {
     renderData (*fn)(renderData);
+    int temp[2];
+    int temp2[2];
+    int x = 1;
+    int y = 0;
 
     #ifdef _WIN32
-        fn = reinterpret_cast<double(*)(renderData)>(GetProcAddress(engine->getLibHandle(), "render"));
+        fn = reinterpret_cast<renderData(*)(renderData)>(GetProcAddress(engine->getLibHandle(), "render"));
     #else
         fn = reinterpret_cast<renderData(*)(renderData)>(dlsym(engine->getLibHandle(), "render"));
     #endif
@@ -106,10 +110,49 @@ renderData update(Engine* engine, Player * player)
             std::cerr << "cannot load symbol render " << dlerror() << std::endl;
         #endif
     }
+    temp[0] = rdata.playerBody[0][0];
+    rdata.playerBody[0][0] = player->getPosX();
+    temp[1] = rdata.playerBody[0][1];
+    rdata.playerBody[0][1] = player->getPosY();
+    for (int i = 1; i < rdata.playerBody.size(); i++)
+    {
+        while(!food->getVisible())
+        {
+//            food->setPosX(0 + (rand() % static_cast<int>(engine->getWindow()->getWidth() - 0 + 1)));
+//            food->setPosY(0 + (rand() % static_cast<int>(engine->getWindow()->getHeight() - 0 + 1)));
+            food->setPosX(std::rand() % engine->getWindow()->getObjWidth());
+            food->setPosY(std::rand() % engine->getWindow()->getObjHeight());
+            if (food->getPosX() != rdata.playerBody[x][y] && food->getPosY() != rdata.playerBody[x][y + 1])
+                food->setVisible(true);
+        }
+        rdata.foodPosX = food->getPosX();
+        rdata.foodPosY = food->getPosY();
+        if (player->getPosX() == rdata.playerBody[x][y] && player->getPosY() == rdata.playerBody[x][y + 1])
+        {
+            std::cout << "Stop hitting yourself" << std::endl;
+            destroyInstance(engine);
+        }
+        temp2[0] = rdata.playerBody[x][y];
+        rdata.playerBody[x][y] = temp[0];
+        ++y;
+        temp2[1] = rdata.playerBody[x][y];
+        rdata.playerBody[x][y] = temp[1];
+        --y;
+        ++x;
+        temp[0] = temp2[0];
+        temp[1] = temp2[1];
+    }
     player->setPosX(player->getXDirection());
     rdata.playerPosX = player->getPosX();
     player->setPosY(player->getYDirection());
     rdata.playerPosY = player->getPosY();
+    if (food->getVisible() && player->getPosX() == food->getPosX() && player->getPosY() == food->getPosY())
+    {
+        food->setVisible(false);
+        rdata.playerBody.push_back(std::vector<int>(2));
+        rdata.playerBody[rdata.playerBody.size() - 1][0] = rdata.playerBody[rdata.playerBody.size() - 2][0];
+        rdata.playerBody[rdata.playerBody.size() - 1][1] = rdata.playerBody[rdata.playerBody.size() - 2][1];
+    }
     if (rdata.playerPosX < 0 || rdata.playerPosX > engine->getWindow()->getObjWidth() - 1 || rdata.playerPosY < 0 || rdata.playerPosY > engine->getWindow()->getObjHeight() - 1)
         destroyInstance(engine);
     rdata = (*fn)(rdata);
@@ -119,6 +162,8 @@ renderData update(Engine* engine, Player * player)
 void initializeSDL(Engine * engine, Player * player)
 {
     double (*fn)(renderData);
+    int x = 0;
+    int y = 0;
 
     rdata.winWidth = 640;
     rdata.winHeight = 480;
@@ -126,6 +171,17 @@ void initializeSDL(Engine * engine, Player * player)
     rdata.objHeight = 480 / engine->getWindow()->getObjHeight();
     rdata.playerPosX = player->getPosX();
     rdata.playerPosY = player->getPosY();
+    rdata.playerXDirection = 0;
+    rdata.playerYDirection = -1;
+    for (int i = 0; i <= 1; i++)
+    {
+        rdata.playerBody.push_back(std::vector<int>(2));
+        rdata.playerBody[x][y] = player->getPosX();
+        ++y;
+        rdata.playerBody[x][y] = player->getPosY() + i;
+        --y;
+        ++x;
+    }
     #ifdef _WIN32
     fn = reinterpret_cast<double(*)(renderData)>(GetProcAddress(engine->getLibHandle(), "initialize"));
     if (!fn)
@@ -135,11 +191,12 @@ void initializeSDL(Engine * engine, Player * player)
     if (!fn)
         std::cerr << "Cannot load symbol initialize " << dlerror() << std::endl;
     #endif 
-    (*fn)(rdata);
+    (fn)(rdata);
 }
 
 int main(int ac, char * av[])
 {
+    srand(time(NULL));
     int width, height;
 
     if (ac != 3)
@@ -152,6 +209,7 @@ int main(int ac, char * av[])
     height = atoi(av[2]);
     Engine * engine = new Engine(width, height, width/2, height/2);
     Player * player = new Player(width/2, height/2);
+    Food * food = new Food();
     engine->setLibHandle(loadLib(1));//only defined in #ifdef _WIN32; have to make it for linux.
     engine->setLib(1);
 
@@ -159,7 +217,11 @@ int main(int ac, char * av[])
     {
         while (engine->getLib() == 1)
         {
-            usleep(100000);
+            #ifdef _WIN32
+                Sleep(100);
+            #else
+                usleep(100000);
+            #endif
             if (!engine->getLib1())
             {
                 initializeSDL(engine, player);
@@ -176,16 +238,11 @@ int main(int ac, char * av[])
                     engine->setKey(0);
                     break;
                 }
-                if (engine->getKey() == -1)
-                {
-                    unloadLib(engine);
-                    engine->setLib1(false);
-                    return 0;
-                }
             }
             else
             {
-                rdata = update(engine, player);
+                rdata = update(engine, player, food);
+                rdata.dir = false;
                 player->setXDirection(rdata.playerXDirection);
                 player->setYDirection(rdata.playerYDirection);
                 engine->setKey(0);
@@ -204,15 +261,10 @@ int main(int ac, char * av[])
                     engine->setKey(0);
                     break;
                 }
-                if (engine->getKey() == -1)
-                {
-                    unloadLib(engine);
-                    return 0;
-                }
             }
             else
             {
-                rdata = update(engine, player);
+                rdata = update(engine, player, food);
                 engine->setKey(0);
             }
         }
@@ -228,41 +280,13 @@ int main(int ac, char * av[])
                     engine->setKey(0);
                     break;
                 }
-                if (engine->getKey() == -1)
-                {
-                    unloadLib(engine);
-                    return 0;
-                }
             }
             else
             {
-                rdata = update(engine, player);
+                rdata = update(engine, player, food);
                 engine->setKey(0);
             }
         }
-
-//        while(engine->getLib() == 3)
-//        {
-//            if (engine->getKey() != 3 && engine->getKey() != 0) {
-//                if (engine->getKey() == 1 || engine->getKey() == 2)
-//                {
-//                    unloadLib(engine);
-//                    loadLib(engine->getKey());
-//                    engine->setLib(engine->getKey());
-//                    engine->setKey(0);
-//                    break;
-//                }
-//                if (engine->getKey() == -1)
-//                {
-//                    return 0;
-//                }
-//            }
-//            else
-//            {
-//                update(engine);
-//                engine->setKey(0);
-//            }
-//        }
     }
     return 0;
 }

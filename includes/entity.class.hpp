@@ -13,6 +13,10 @@ class Entity {
         void operator = (const Entity& entity);
         ~Entity();
 
+        int getPosX();
+        int getPosY();
+        void setPosX(int posx);
+        void setPosY(int posy);
     protected:
         int xPos;
         int yPos;

@@ -30,3 +30,23 @@ Entity::~Entity()
 {
 
 }
+
+int Entity::getPosX()
+{
+    return this->xPos;
+}
+
+int Entity::getPosY()
+{
+    return this->yPos;
+}
+
+void Entity::setPosX(int posx)
+{
+    this->xPos = posx;
+}
+
+void Entity::setPosY(int posy)
+{
+    this->yPos = posy;
+}

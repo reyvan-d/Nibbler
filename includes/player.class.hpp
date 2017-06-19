@@ -5,6 +5,7 @@
 #ifndef PLAYER_CLASS_H
 #define PLAYER_CLASS_H
 
+#include "nibbler.h"
 #include "entity.class.hpp"
 
 class Player : public Entity {
@@ -19,6 +20,7 @@ class Player : public Entity {
         int getPosY();
         int getXDirection();
         int getYDirection();
+        std::vector<Entity> getBody();
         void setPosX(int posX);
         void setPosY(int posY);
         void setXDirection(int dirX);
@@ -26,6 +28,7 @@ class Player : public Entity {
     private:
         int xDirection;
         int yDirection;
+        std::vector<Entity> bodyPart;
 };
 
 #endif
