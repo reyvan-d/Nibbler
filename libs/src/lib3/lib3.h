@@ -6,13 +6,14 @@
 #define LIB3_H
 
 #include "../../../includes/nibbler.h"
+#include <epoxy/gl.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 //library code goes here
-void render(Engine * engine);
+renderData render(renderData rdata);
 
 #ifdef __cplusplus
 }

@@ -85,7 +85,6 @@ void destroyInstance(Engine * engine)
     }
     (*fn)();
     unloadLib(engine);
-    exit(0);
 }
 
 renderData update(Engine* engine, Player * player, Food * food)
@@ -173,7 +172,7 @@ void initializeSDL(Engine * engine, Player * player)
     rdata.playerPosY = player->getPosY();
     rdata.playerXDirection = 0;
     rdata.playerYDirection = -1;
-    for (int i = 0; i <= 1; i++)
+    for (int i = 0; i <= 3; i++)
     {
         rdata.playerBody.push_back(std::vector<int>(2));
         rdata.playerBody[x][y] = player->getPosX();
@@ -220,7 +219,7 @@ int main(int ac, char * av[])
             #ifdef _WIN32
                 Sleep(100);
             #else
-                usleep(100000);
+                usleep(50000);
             #endif
             if (!engine->getLib1())
             {
@@ -228,14 +227,16 @@ int main(int ac, char * av[])
                 engine->setLib1(true);
             }
 
-            if (engine->getKey() != 1 && engine->getKey() != 0)
+            if (rdata.key != 1 && rdata.key != 0)
             {
-                if (engine->getKey() == 2 || engine->getKey() == 3)
+                if (rdata.key == 2 || rdata.key == 3)
                 {
+                    //destroyInstance(engine);
                     unloadLib(engine);
-                    engine->setLibHandle(loadLib(engine->getKey()));
-                    engine->setLib(engine->getKey());
-                    engine->setKey(0);
+                    engine->setLibHandle(loadLib(rdata.key));
+                    engine->setLib(rdata.key);
+                    engine->setLib1(false);
+                    rdata.key = 0;
                     break;
                 }
             }
@@ -245,7 +246,6 @@ int main(int ac, char * av[])
                 rdata.dir = false;
                 player->setXDirection(rdata.playerXDirection);
                 player->setYDirection(rdata.playerYDirection);
-                engine->setKey(0);
             }
 
         }
@@ -271,20 +271,27 @@ int main(int ac, char * av[])
 
         while(engine->getLib() == 3)
         {
+//            if (!engine->getLib1())
+//            {
+//                initializeSDL(engine, player);
+//                engine->setLib1(true);
+//            }
             if (engine->getKey() != 3 && engine->getKey() != 0) {
                 if (engine->getKey() == 1 || engine->getKey() == 2)
                 {
                     unloadLib(engine);
-                    engine->setLibHandle(loadLib(engine->getKey()));
-                    engine->setLib(engine->getKey());
-                    engine->setKey(0);
+                    engine->setLibHandle(loadLib(rdata.key));
+                    engine->setLib(rdata.key);
+                    rdata.key = 0;
                     break;
                 }
             }
             else
             {
                 rdata = update(engine, player, food);
-                engine->setKey(0);
+                rdata.dir = false;
+                player->setXDirection(rdata.playerXDirection);
+                player->setYDirection(rdata.playerYDirection);
             }
         }
     }

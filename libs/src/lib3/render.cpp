@@ -4,7 +4,8 @@
 
 #include "lib3.h"
 
-void render(Engine * engine)
+renderData render(renderData rdata)
 {
-
+    std::cout << "EPOXY_GL_VERSION: " << epoxy_gl_version() << std::endl;
+    return rdata;
 }
