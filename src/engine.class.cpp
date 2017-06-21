@@ -10,6 +10,8 @@ Engine::Engine()
     this->cLib = 1;
     this->key = 0;
     this->lib1 = false;
+    this->lib2 = false;
+    this->lib3 = false;
     Player * player = new Player();
 }
 
@@ -19,6 +21,8 @@ Engine::Engine(int width, int height, int pxPos, int pyPos)
     this->cLib = 1;
     this->key = 0;
     this->lib1 = false;
+    this->lib2 = false;
+    this->lib3 = false;
     Player *player = new Player(pxPos, pyPos);
 }
 
@@ -61,9 +65,29 @@ bool Engine::getLib1()
     return this->lib1;
 }
 
+bool Engine::getLib2()
+{
+    return this->lib2;
+}
+
+bool Engine::getLib3()
+{
+    return this->lib3;
+}
+
 void Engine::setLib1(bool init)
 {
     this->lib1 = init;
+}
+
+void Engine::setLib2(bool init)
+{
+    this->lib2 = init;
+}
+
+void Engine::setLib3(bool init)
+{
+    this->lib3 = init;
 }
 
 void Engine::setKey(int key)

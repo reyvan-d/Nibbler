@@ -21,7 +21,11 @@ class Engine {
         void setLib(int lib);
         void setKey(int key);
         bool getLib1();
+        bool getLib2();
+        bool getLib3();
         void setLib1(bool init);
+        void setLib2(bool init);
+        void setLib3(bool init);
 
         #ifdef _WIN32
             void setLibHandle(HINSTANCE lib_handle);
@@ -35,6 +39,8 @@ class Engine {
         int key;
         int cLib;
         bool lib1;
+        bool lib2;
+        bool lib3;
         #ifdef _WIN32
             HINSTANCE lib_handle;
         #else

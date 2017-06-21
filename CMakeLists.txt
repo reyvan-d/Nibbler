@@ -9,6 +9,7 @@ set(
         CMAKE_RUNTIME_OUTPUT_DIRECTORY
         ${CMAKE_HOME_DIRECTORY}
 )
+#set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 set(CMAKE_PREFIX_PATH "~/")
 set(CMAKE_CXX_FLAGS "-std=c++11")
 
@@ -20,11 +21,16 @@ set(CMAKE_CXX_FLAGS "-std=c++11")
 set(SDL2_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/SDL2")
 set(SDL2_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libSDL2.dylib")
 
+set(GLEW_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/GL")
+set(GLFW_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/GLFW")
+set(GLEW_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libGLEW.dylib")
+set(GLFW_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libglfw.dylib")
+
 #Linux
 #set(SDL2_INCLUDE_DIR "/usr/include/SDL2")
 
 
-include_directories(includes ${SDL2_INCLUDE_DIR})
+include_directories(includes ${SDL2_INCLUDE_DIR} ${GLEW_INCLUDE_DIR} ${GLFW_INCLUDE_DIR})
 
 #shared libraries
 file(GLOB LIBS1 "libs/src/lib1/*.cpp")
@@ -49,6 +55,11 @@ add_executable(nibbler ${SOURCES})
 target_link_libraries(${LINK_LIB1} ${SDL2_LIBRARY})
 target_link_libraries(${LINK_LIB1} ${SDL2_GFX_LIBRARY})
 
+target_link_libraries(${LINK_LIB3} ${GLEW_LIBRARY} ${GLFW_LIBRARY} "-framework OpenGL")
+
+#if (SFML_FOUND)
+#target_link_libraries(${LINK_LIB2} ${SFML_LIBRARIES})
+#endif()
 #Linux
 #target_link_libraries(nibbler dl)
 #target_link_libraries(${LINK_LIB1} SDL2)

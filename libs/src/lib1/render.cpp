@@ -60,7 +60,7 @@ void initialize(renderData rdata)
 
 void clean()
 {
-    cleanup(ren, win);
+    cleanup(ren, win, tex);
     SDL_Quit();
     return ;
 }
@@ -138,6 +138,9 @@ renderData render(renderData rdata)
                             rdata.playerYDirection = 1;
                             rdata.dir = true;
                         }
+                        break;
+                    case SDLK_3:
+                        rdata.key = 3;
                         break;
                     case SDLK_ESCAPE:
                         clean();

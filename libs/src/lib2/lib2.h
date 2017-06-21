@@ -6,6 +6,7 @@
 #define LIB2_H
 
 #include "../../../includes/nibbler.h"
+//#include <SFML/Graphics.hpp>
 
 #ifdef __cplusplus
 extern "C" {

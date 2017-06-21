@@ -43,7 +43,7 @@ struct renderData
     int playerYDirection;
     int foodPosX;
     int foodPosY;
-    int key;
+    int key = 0;
     bool dir = false;
     std::vector<std::vector<int>> playerBody;
 };

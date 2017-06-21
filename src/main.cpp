@@ -117,8 +117,6 @@ renderData update(Engine* engine, Player * player, Food * food)
     {
         while(!food->getVisible())
         {
-//            food->setPosX(0 + (rand() % static_cast<int>(engine->getWindow()->getWidth() - 0 + 1)));
-//            food->setPosY(0 + (rand() % static_cast<int>(engine->getWindow()->getHeight() - 0 + 1)));
             food->setPosX(std::rand() % engine->getWindow()->getObjWidth());
             food->setPosY(std::rand() % engine->getWindow()->getObjHeight());
             if (food->getPosX() != rdata.playerBody[x][y] && food->getPosY() != rdata.playerBody[x][y + 1])
@@ -158,9 +156,24 @@ renderData update(Engine* engine, Player * player, Food * food)
     return rdata;
 }
 
-void initializeSDL(Engine * engine, Player * player)
+void initializeRenderer(Engine * engine)
 {
     double (*fn)(renderData);
+
+    #ifdef _WIN32
+    fn = reinterpret_cast<double(*)(renderData)>(GetProcAddress(engine->getLibHandle(), "initialize"));
+    if (!fn)
+        std::cerr << "Cannot load symbol initialize " << GetLastError() << std::endl;
+    #else
+    fn = reinterpret_cast<double(*)(renderData)>(dlsym(engine->getLibHandle(), "initialize"));
+    if (!fn)
+        std::cerr << "Cannot load symbol initialize " << dlerror() << std::endl;
+    #endif 
+    (fn)(rdata);
+}
+
+void initializeGame(Engine * engine, Player * player)
+{
     int x = 0;
     int y = 0;
 
@@ -181,16 +194,6 @@ void initializeSDL(Engine * engine, Player * player)
         --y;
         ++x;
     }
-    #ifdef _WIN32
-    fn = reinterpret_cast<double(*)(renderData)>(GetProcAddress(engine->getLibHandle(), "initialize"));
-    if (!fn)
-        std::cerr << "Cannot load symbol initialize " << GetLastError() << std::endl;
-    #else
-    fn = reinterpret_cast<double(*)(renderData)>(dlsym(engine->getLibHandle(), "initialize"));
-    if (!fn)
-        std::cerr << "Cannot load symbol initialize " << dlerror() << std::endl;
-    #endif 
-    (fn)(rdata);
 }
 
 int main(int ac, char * av[])
@@ -211,6 +214,7 @@ int main(int ac, char * av[])
     Food * food = new Food();
     engine->setLibHandle(loadLib(1));//only defined in #ifdef _WIN32; have to make it for linux.
     engine->setLib(1);
+    initializeGame(engine, player);
 
     while (engine->getLib() != 0)
     {
@@ -223,7 +227,7 @@ int main(int ac, char * av[])
             #endif
             if (!engine->getLib1())
             {
-                initializeSDL(engine, player);
+                initializeRenderer(engine);
                 engine->setLib1(true);
             }
 
@@ -231,13 +235,10 @@ int main(int ac, char * av[])
             {
                 if (rdata.key == 2 || rdata.key == 3)
                 {
-                    //destroyInstance(engine);
-                    unloadLib(engine);
+                    destroyInstance(engine);
                     engine->setLibHandle(loadLib(rdata.key));
                     engine->setLib(rdata.key);
                     engine->setLib1(false);
-                    rdata.key = 0;
-                    break;
                 }
             }
             else
@@ -250,40 +251,44 @@ int main(int ac, char * av[])
 
         }
 
-        while(engine->getLib() == 2)
-        {
-            if (engine->getKey() != 2 && engine->getKey() != 0) {
-                if (engine->getKey() == 1 || engine->getKey() == 3)
-                {
-                    unloadLib(engine);
-                    engine->setLibHandle(loadLib(engine->getKey()));
-                    engine->setLib(engine->getKey());
-                    engine->setKey(0);
-                    break;
-                }
-            }
-            else
-            {
-                rdata = update(engine, player, food);
-                engine->setKey(0);
-            }
-        }
+//        while(engine->getLib() == 2)
+//        {
+//            if (engine->getKey() != 2 && engine->getKey() != 0) {
+//                if (engine->getKey() == 1 || engine->getKey() == 3)
+//                {
+//                    unloadLib(engine);
+//                    engine->setLibHandle(loadLib(engine->getKey()));
+//                    engine->setLib(engine->getKey());
+//                    engine->setKey(0);
+//                }
+//            }
+//            else
+//            {
+//                rdata = update(engine, player, food);
+//                engine->setKey(0);
+//            }
+//        }
 
         while(engine->getLib() == 3)
         {
-//            if (!engine->getLib1())
-//            {
-//                initializeSDL(engine, player);
-//                engine->setLib1(true);
-//            }
-            if (engine->getKey() != 3 && engine->getKey() != 0) {
-                if (engine->getKey() == 1 || engine->getKey() == 2)
+            #ifdef _WIN32
+                Sleep(100);
+            #else
+                usleep(50000);
+            #endif
+            if (!engine->getLib3())
+            {
+                rdata.key = 0;
+                initializeRenderer(engine);
+                engine->setLib3(true);
+            }
+            if (rdata.key != 3 && rdata.key != 0) {
+                if (rdata.key == 1 || rdata.key == 2)
                 {
-                    unloadLib(engine);
+                    destroyInstance(engine);
                     engine->setLibHandle(loadLib(rdata.key));
                     engine->setLib(rdata.key);
-                    rdata.key = 0;
-                    break;
+                    engine->setLib1(false);
                 }
             }
             else
