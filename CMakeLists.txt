@@ -14,23 +14,30 @@ set(CMAKE_PREFIX_PATH "~/")
 set(CMAKE_CXX_FLAGS "-std=c++11")
 
 #Windows
-#set(SDL2_INCLUDE_DIR "C:/SDL/i686-w64-mingw32/include/SDL2")
-#set(SDL2_LIBRARY "C:/SDL/i686-w64-mingw32/lib/libSDL2.a")
+set(SDL2_INCLUDE_DIR "C:/SDL/i686-w64-mingw32/include/SDL2")
+set(SDL2_LIBRARY "C:/SDL/i686-w64-mingw32/lib/libSDL2.a")
+
+set(GLEW_INCLUDE_DIR "C:/GLEW/include")
+set(GLEW_STATIC_LIBRARY "C:/GLEW/lib/Win32/glew32.lib")
+set(FREEGLUT_INCLUDE_DIR "C:/FreeGlut/include")
+set(GLEW_LIBRARY "C:/GLEW/bin/Release/Win32/glew32.dll")
+set(FREEGLUT_LIBRARY "C:/FreeGlut/lib/libfreeglut.a")
+
 
 #OSX
-set(SDL2_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/SDL2")
-set(SDL2_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libSDL2.dylib")
+#set(SDL2_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/SDL2")
+#set(SDL2_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libSDL2.dylib")
 
-set(GLEW_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/GL")
-set(GLFW_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/GLFW")
-set(GLEW_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libGLEW.dylib")
-set(GLFW_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libglfw.dylib")
+#set(GLEW_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/GL")
+#set(GLFW_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/GLFW")
+#set(GLEW_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libGLEW.dylib")
+#set(GLFW_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libglfw.dylib")
 
 #Linux
 #set(SDL2_INCLUDE_DIR "/usr/include/SDL2")
 
 
-include_directories(includes ${SDL2_INCLUDE_DIR} ${GLEW_INCLUDE_DIR} ${GLFW_INCLUDE_DIR})
+include_directories(includes ${SDL2_INCLUDE_DIR} ${GLEW_INCLUDE_DIR} ${FREEGLUT_INCLUDE_DIR})
 
 #shared libraries
 file(GLOB LIBS1 "libs/src/lib1/*.cpp")
@@ -49,13 +56,13 @@ file(GLOB SOURCES "src/*.cpp")
 add_executable(nibbler ${SOURCES})
 
 #Windows
-#target_link_libraries(${LINK_LIB1} ${SDL2_LIBRARY} mingw32 m dinput8 dxguid dxerr8 user32 winmm imm32 ole32 oleaut32 shell32 version uuid)
+target_link_libraries(${LINK_LIB1} ${SDL2_LIBRARY} mingw32 m dinput8 dxguid dxerr8 user32 winmm imm32 ole32 oleaut32 shell32 version uuid)
+target_link_libraries(${LINK_LIB3} ${FREEGLUT_LIBRARY} ${GLEW_LIBRARY} ${GLEW_STATIC_LIBRARY} "-lopengl32 -lglu32 -lWs2_32 -lole32 -lcomctl32 -lgdi32 -lcomdlg32 -luuid")
 
 #OSX
-target_link_libraries(${LINK_LIB1} ${SDL2_LIBRARY})
-target_link_libraries(${LINK_LIB1} ${SDL2_GFX_LIBRARY})
-
-target_link_libraries(${LINK_LIB3} ${GLEW_LIBRARY} ${GLFW_LIBRARY} "-framework OpenGL")
+#target_link_libraries(${LINK_LIB1} ${SDL2_LIBRARY})
+#target_link_libraries(${LINK_LIB1} ${SDL2_GFX_LIBRARY})
+#target_link_libraries(${LINK_LIB3} ${GLEW_LIBRARY} ${GLFW_LIBRARY} "-framework OpenGL")
 
 #if (SFML_FOUND)
 #target_link_libraries(${LINK_LIB2} ${SFML_LIBRARIES})

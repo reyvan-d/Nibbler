@@ -21,7 +21,7 @@ HINSTANCE loadLib(int key)
             lib_handle = LoadLibrary(TEXT("liblib3.dll"));
         if (!lib_handle)
         {
-            std::cerr << "Cannot load library: " << TEXT("Lib1") << std::endl;
+            std::cerr << "Cannot load library: " << TEXT("Lib") << TEXT(key) << " " << GetLastError() << std::endl;
             exit(1);
         }
         else
@@ -57,7 +57,7 @@ void unloadLib(Engine* engine)
 {
     #ifdef _WIN32
         FreeLibrary(engine->getLibHandle());
-        engine->setLib(0);
+        engine->setLib(-1);
         std::cout << "Lib closed" << std::endl;
     #else
         dlclose(engine->getLibHandle());
@@ -177,8 +177,8 @@ void initializeGame(Engine * engine, Player * player)
     int x = 0;
     int y = 0;
 
-    rdata.winWidth = 640;
-    rdata.winHeight = 480;
+    rdata.winWidth = engine->getWindow()->getObjWidth();
+    rdata.winHeight = engine->getWindow()->getObjHeight();
     rdata.objWidth = 480 / engine->getWindow()->getObjWidth();
     rdata.objHeight = 480 / engine->getWindow()->getObjHeight();
     rdata.playerPosX = player->getPosX();
@@ -209,6 +209,8 @@ int main(int ac, char * av[])
 
     width = atoi(av[1]);
     height = atoi(av[2]);
+    rdata.ac = ac;
+    rdata.av = av;
     Engine * engine = new Engine(width, height, width/2, height/2);
     Player * player = new Player(width/2, height/2);
     Food * food = new Food();
@@ -221,7 +223,7 @@ int main(int ac, char * av[])
         while (engine->getLib() == 1)
         {
             #ifdef _WIN32
-                Sleep(100);
+                Sleep(50);
             #else
                 usleep(50000);
             #endif
@@ -235,10 +237,11 @@ int main(int ac, char * av[])
             {
                 if (rdata.key == 2 || rdata.key == 3)
                 {
+                    std::cout << "lib1" << std::endl;
                     destroyInstance(engine);
+                    engine->setLib1(false);
                     engine->setLibHandle(loadLib(rdata.key));
                     engine->setLib(rdata.key);
-                    engine->setLib1(false);
                 }
             }
             else
@@ -272,7 +275,7 @@ int main(int ac, char * av[])
         while(engine->getLib() == 3)
         {
             #ifdef _WIN32
-                Sleep(100);
+                Sleep(50);
             #else
                 usleep(50000);
             #endif
@@ -285,10 +288,11 @@ int main(int ac, char * av[])
             if (rdata.key != 3 && rdata.key != 0) {
                 if (rdata.key == 1 || rdata.key == 2)
                 {
+                    std::cout << "lib1" << std::endl;
                     destroyInstance(engine);
+                    engine->setLib3(false);
                     engine->setLibHandle(loadLib(rdata.key));
                     engine->setLib(rdata.key);
-                    engine->setLib1(false);
                 }
             }
             else

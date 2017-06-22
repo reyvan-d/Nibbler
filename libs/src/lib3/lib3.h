@@ -6,18 +6,27 @@
 #define LIB3_H
 
 #include "../../../includes/nibbler.h"
-#include <glew.h>
-#include <glfw3.h>
-#include <glfw3native.h>
+#include <GL/glew.h>
+#include <GL/gl.h>
+#include <GL/freeglut.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-//library code goes here
-void initialize(renderData rdata);
-renderData render(renderData rdata);
-void clean();
+#ifdef _WIN32
+    __declspec(dllexport) void initialize(renderData rdata);
+    __declspec(dllexport) void renderScreen();
+    __declspec(dllexport) void handleResize(int w, int h);
+    __declspec(dllexport) void handleKeypress(unsigned char key, int x, int y);
+    __declspec(dllexport) void specialInput(int key, int x, int y);
+    __declspec(dllexport) renderData render(renderData rdata);
+    __declspec(dllexport) void clean();
+#else
+    void initialize(renderData rdata);
+    renderData render(renderData rdata);
+    void clean();
+#endif
 
 #ifdef __cplusplus
 }

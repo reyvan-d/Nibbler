@@ -44,6 +44,8 @@ struct renderData
     int foodPosX;
     int foodPosY;
     int key = 0;
+    int ac;
+    char ** av;
     bool dir = false;
     std::vector<std::vector<int>> playerBody;
 };
