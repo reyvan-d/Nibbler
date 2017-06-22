@@ -24,8 +24,6 @@ HINSTANCE loadLib(int key)
             std::cerr << "Cannot load library: " << TEXT("Lib") << TEXT(key) << " " << GetLastError() << std::endl;
             exit(1);
         }
-        else
-            std::cout << "Lib loaded" << std::endl;
         return lib_handle;
 }
 
@@ -47,8 +45,6 @@ void    *loadLib(int key)//linux
             std::cerr << dlerror() << std::endl;
             exit(1);
         }
-        else
-            std::cout << "Lib loaded" << std::endl;
         return (lib_handle);
 }
 #endif
@@ -58,11 +54,9 @@ void unloadLib(Engine* engine)
     #ifdef _WIN32
         FreeLibrary(engine->getLibHandle());
         engine->setLib(-1);
-        std::cout << "Lib closed" << std::endl;
     #else
         dlclose(engine->getLibHandle());
         engine->setLib(0);
-        std::cout << "Lib closed" << std::endl;
     #endif
 }
 
@@ -126,8 +120,9 @@ renderData update(Engine* engine, Player * player, Food * food)
         rdata.foodPosY = food->getPosY();
         if (player->getPosX() == rdata.playerBody[x][y] && player->getPosY() == rdata.playerBody[x][y + 1])
         {
-            std::cout << "Stop hitting yourself" << std::endl;
+            std::cout << "YOU DIED" << std::endl;
             destroyInstance(engine);
+            exit(0);
         }
         temp2[0] = rdata.playerBody[x][y];
         rdata.playerBody[x][y] = temp[0];
@@ -151,7 +146,11 @@ renderData update(Engine* engine, Player * player, Food * food)
         rdata.playerBody[rdata.playerBody.size() - 1][1] = rdata.playerBody[rdata.playerBody.size() - 2][1];
     }
     if (rdata.playerPosX < 0 || rdata.playerPosX > engine->getWindow()->getObjWidth() - 1 || rdata.playerPosY < 0 || rdata.playerPosY > engine->getWindow()->getObjHeight() - 1)
+    {
         destroyInstance(engine);
+        std::cout << "YOU DIED" << std::endl;
+        exit(0);
+    }
     rdata = (*fn)(rdata);
     return rdata;
 }
@@ -237,7 +236,6 @@ int main(int ac, char * av[])
             {
                 if (rdata.key == 2 || rdata.key == 3)
                 {
-                    std::cout << "lib1" << std::endl;
                     destroyInstance(engine);
                     engine->setLib1(false);
                     engine->setLibHandle(loadLib(rdata.key));
@@ -288,7 +286,6 @@ int main(int ac, char * av[])
             if (rdata.key != 3 && rdata.key != 0) {
                 if (rdata.key == 1 || rdata.key == 2)
                 {
-                    std::cout << "lib1" << std::endl;
                     destroyInstance(engine);
                     engine->setLib3(false);
                     engine->setLibHandle(loadLib(rdata.key));

@@ -30,7 +30,7 @@ void initialize(renderData rdata)
         SDL_Quit();
         return;
     }
-    bmp = SDL_LoadBMP("../Crab Nebula.bmp");
+    bmp = SDL_LoadBMP("textures/lib1/Crab Nebula.bmp");
     if (bmp == nullptr) {
         cleanup(ren, win);
         std::cout << "SDL_LoadBMP Error: " << SDL_GetError() << std::endl;
@@ -81,7 +81,7 @@ renderData render(renderData rdata)
     r.h = rdata.objHeight;
     SDL_RenderFillRect(ren, &r);
     SDL_SetRenderDrawColor(ren, 0, 255, 0, 255);
-    for (int i = 1; i <= rdata.playerBody.size(); i++)
+    for (int i = 1; i <= static_cast<int>(rdata.playerBody.size()); i++)
     {
         r.x = rdata.playerBody[x][y] * rdata.objWidth;
         ++y;

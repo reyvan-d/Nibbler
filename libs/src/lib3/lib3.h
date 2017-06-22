@@ -16,6 +16,7 @@ extern "C" {
 
 #ifdef _WIN32
     __declspec(dllexport) void initialize(renderData rdata);
+    __declspec(dllexport) void LoadTextureRAW(GLuint texture, const char *filename, int wrap, int width, int height);
     __declspec(dllexport) void renderScreen();
     __declspec(dllexport) void handleResize(int w, int h);
     __declspec(dllexport) void handleKeypress(unsigned char key, int x, int y);

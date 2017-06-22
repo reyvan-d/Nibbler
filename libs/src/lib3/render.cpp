@@ -5,18 +5,31 @@
 #include "lib3.h"
 
 renderData glData;
+int win;
+GLuint texture;
+GLfloat light_diffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
+GLfloat light_position[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
 void initialize(renderData rdata)
 {
     glutInit(&rdata.ac, rdata.av);
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_DEPTH | GLUT_MULTISAMPLE | GLUT_RGB | GLUT_DOUBLE);
     glutInitWindowSize(640, 640);
-    glutCreateWindow("Nibbler");
+    win = glutCreateWindow("Nibbler");
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 20);
+    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_COLOR_MATERIAL);
+    glGenTextures(1, &texture);
+    LoadTextureRAW(texture, "textures/lib3/iron_texture2.data", 1, 256, 256);
     glutDisplayFunc(&renderScreen);
     glutKeyboardFunc(handleKeypress);
     glutSpecialFunc(specialInput);
     glutReshapeFunc(handleResize);
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
+
     glewInit();
     if (!GLEW_VERSION_3_3)
     {
@@ -27,8 +40,59 @@ void initialize(renderData rdata)
     return ;
 }
 
+void LoadTextureRAW(GLuint texture, const char *filename, int wrap, int width, int height)
+{
+    unsigned char	*data;
+    FILE			*file;
+
+    // open texture data
+    file = fopen( filename, "rb" );
+    if (file == NULL)
+    {
+        return ;
+    }
+
+    // allocate buffer
+    data = static_cast<unsigned char *>(malloc(static_cast<unsigned int>(width * height * 3)));
+
+    // read texture data
+    fread(data, static_cast<unsigned int>(width * height * 3), 1, file);
+    fclose(file);
+
+    // select modulate to mix texture with color for shading
+//    glTexEnvf( GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
+
+    // when texture area is small, bilinear filter the closest mipmap
+//    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+//                     GL_LINEAR_MIPMAP_NEAREST );
+    // when texture area is large, bilinear filter the first mipmap
+//    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+    // if wrap is true, the texture wraps over at the edges (repeat)
+    //       ... false, the texture ends at the edges (clamp)
+//    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,
+    //                    wrap ? GL_REPEAT : GL_CLAMP );
+//    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,
+//                     wrap ? GL_REPEAT : GL_CLAMP );
+
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap ? GL_REPEAT : GL_CLAMP);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+    // build our texture mipmaps
+    gluBuild2DMipmaps(GL_TEXTURE_2D, 3, width, height, GL_RGB, GL_UNSIGNED_BYTE, data);
+    // free buffer
+    delete (data);
+}
+
 void specialInput(int key, int x, int y)
 {
+    static_cast<void>(x);
+    static_cast<void>(y);
     switch(key)
     {
         case GLUT_KEY_UP:
@@ -77,7 +141,8 @@ void handleResize(int w, int h)
 
 void handleKeypress(unsigned char key, int x, int y)
 {
-    std::cout << key << std::endl;
+    static_cast<void>(x);
+    static_cast<void>(y);
     switch(key)
     {
         case '1':
@@ -102,27 +167,37 @@ void renderScreen()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glScalef(1.0f, -1.0f, 1.0f);
+    glScalef(0.8f, -0.8f, 0.8f);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-
-//    float x = glData.objWidth;
-//    float y = glData.objHeight;
-//    glBegin(GL_LINES);
-//    for (float f = -1.0f; f <= 1.0; f += 2.0/(x))
-//    {
-//        glVertex2f(f, -1);
-//        glVertex2f(f, 1);
-//    }
-//    for (float f = -1.0f; f <= 1.0; f += 2.0/(y))
-//    {
-//        glVertex2f(-1, f);
-//        glVertex2f(1, f);
-//    }
-//    glEnd();
-    glColor3f(255.0f, 0.0f, 0.0f);
     glTranslatef(-1.0f, -1.0f, 0.0f);
-    glBegin(GL_QUADS);
+    //glRotatef(40.0f, 0.0f, 1.0f, 0.0f);
+    glRotatef(2.0f, 0.0f, 0.0f, 1.0f);
+    glRotatef(25.0f, 0.0f, 1.0f, 0.0f);
+
+    float width;
+    width = 2;
+    width = width / glData.winWidth;
+    float height;
+    height = 2;
+    height = height / glData.winHeight;
+
+    float x1 = glData.objWidth;
+    float y1 = glData.objHeight;
+    glColor3f(100.0f, 0.0f, 200.0f);
+    glBegin(GL_LINES);
+    for (float f = 0.0f; f <= (2.0 + width); f += width)
+    {
+        glVertex3f(f, 0.0f, 0.1f);
+        glVertex3f(f, 2.0f, 0.1f);
+    }
+    for (float f = 0.0f; f <= (2.0 + height); f += height)
+    {
+        glVertex3f(0.0f, f, 0.1f);
+        glVertex3f(2.0f, f, 0.1f);
+    }
+    glEnd();
+
     float playerx = glData.playerPosX;
     playerx = playerx / (glData.winWidth / 2);
     float playery = glData.playerPosY;
@@ -133,24 +208,18 @@ void renderScreen()
 //    float objh = glData.objHeight;
 //    objh = objh / 100;
 //    objh = objh * 2;
-    float width;
-    width = 2;
-    width = width / glData.winWidth;
-    float height;
-    height = 2;
-    height = height / glData.winHeight;
+
 //    glVertex2f((playerx * objw) + width, (playery * (objh)) + height);
 //    glVertex2f((playerx * objw) + width, (playery) * objh);
 //    glVertex2f((playerx) * objw, (playery) * objh);
 //    glVertex2f((playerx) * objw, (playery * objh) + height);3
-    glVertex2f(playerx + width, playery + height);
-    glVertex2f(playerx + width, playery);
-    glVertex2f(playerx, playery);
-    glVertex2f(playerx, playery + height);
-    glEnd();
 
-    glColor3f(0.0f, 255.0f, 0.0f);
-    for (int i = 1; i <= glData.playerBody.size(); i++)
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glEnable(GL_NORMALIZE);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    for (int i = 1; i <= static_cast<int>(glData.playerBody.size()); i++)
     {
         float playerBodyX = glData.playerBody[x][y];
         playerBodyX = playerBodyX / (glData.winWidth / 2);
@@ -160,22 +229,114 @@ void renderScreen()
         --y;
         ++x;
         glBegin(GL_QUADS);
-        glVertex2f(playerBodyX + width, playerBodyY + height);
-        glVertex2f(playerBodyX + width, playerBodyY);
-        glVertex2f(playerBodyX, playerBodyY);
-        glVertex2f(playerBodyX, playerBodyY + height);
+
+        glTexCoord2d(1, 1); glVertex3f(playerBodyX + width, playerBodyY + height, 0.0f);
+        glTexCoord2d(1, 0); glVertex3f(playerBodyX + width, playerBodyY, 0.0f);
+        glTexCoord2d(0, 0); glVertex3f(playerBodyX, playerBodyY, 0.0f);
+        glTexCoord2d(0, 1); glVertex3f(playerBodyX, playerBodyY + height, 0.0f);
+
+        glTexCoord2d(0, 0); glVertex3f(playerBodyX + width, playerBodyY + height, 0.0f);
+        glTexCoord2d(0, 1); glVertex3f(playerBodyX + width, playerBodyY, 0.0f);
+        glTexCoord2d(1, 1); glVertex3f(playerBodyX, playerBodyY, 0.0f);
+        glTexCoord2d(1, 0); glVertex3f(playerBodyX, playerBodyY + height, 0.0f);
+
+        glTexCoord2d(0, 0); glVertex3f(playerBodyX + width, playerBodyY + height, 0.1f);
+        glTexCoord2d(0, 1); glVertex3f(playerBodyX + width, playerBodyY + height, 0.0f);
+        glTexCoord2d(1, 1); glVertex3f(playerBodyX + width, playerBodyY, 0.0f);
+        glTexCoord2d(1, 0); glVertex3f(playerBodyX + width, playerBodyY, 0.1f);
+
+        glTexCoord2d(0, 0); glVertex3f(playerBodyX, playerBodyY + height, 0.1f);
+        glTexCoord2d(0, 1); glVertex3f(playerBodyX, playerBodyY + height, 0.0f);
+        glTexCoord2d(1, 1); glVertex3f(playerBodyX, playerBodyY, 0.0f);
+        glTexCoord2d(1, 0); glVertex3f(playerBodyX, playerBodyY, 0.1f);
+
+        glTexCoord2d(0, 0); glVertex3f(playerBodyX + width, playerBodyY, 0.1f);
+        glTexCoord2d(0, 1); glVertex3f(playerBodyX + width, playerBodyY, 0.0f);
+        glTexCoord2d(1, 1); glVertex3f(playerBodyX, playerBodyY, 0.0f);
+        glTexCoord2d(1, 0); glVertex3f(playerBodyX, playerBodyY, 0.1f);
+
+        glTexCoord2d(0, 0); glVertex3f(playerBodyX + width, playerBodyY + height, 0.1f);
+        glTexCoord2d(0, 1); glVertex3f(playerBodyX + width, playerBodyY + height, 0.0f);
+        glTexCoord2d(1, 1); glVertex3f(playerBodyX, playerBodyY + height, 0.0f);
+        glTexCoord2d(1, 0); glVertex3f(playerBodyX, playerBodyY + height, 0.1f);
+
         glEnd();
     }
-    glColor3f(0.0f, 0.0f, 255.0f);
-    glBegin(GL_QUADS);
+    glDisable(GL_TEXTURE_2D);
+
     float foodX = glData.foodPosX;
     foodX = foodX / (glData.winWidth / 2);
     float foodY = glData.foodPosY;
     foodY = foodY / (glData.winHeight / 2);
-    glVertex2f(foodX + width, foodY + height);
-    glVertex2f(foodX + width, foodY);
-    glVertex2f(foodX, foodY);
-    glVertex2f(foodX, foodY + height);
+
+    glColor3f(0.0f, 0.0f, 255.0f);
+    glBegin(GL_QUADS);
+
+    glVertex3f(foodX + width, foodY + height, 0.0f);
+    glVertex3f(foodX + width, foodY, 0.0f);
+    glVertex3f(foodX, foodY, 0.0f);
+    glVertex3f(foodX, foodY + height, 0.0f);
+
+    glVertex3f(foodX + width, foodY + height, 0.0f);
+    glVertex3f(foodX + width, foodY, 0.0f);
+    glVertex3f(foodX, foodY, 0.0f);
+    glVertex3f(foodX, foodY + height, 0.0f);
+
+    glVertex3f(foodX + width, foodY + height, 0.1f);
+    glVertex3f(foodX + width, foodY + height, 0.0f);
+    glVertex3f(foodX + width, foodY, 0.0f);
+    glVertex3f(foodX + width, foodY, 0.1f);
+
+    glVertex3f(foodX, foodY + height, 0.1f);
+    glVertex3f(foodX, foodY + height, 0.0f);
+    glVertex3f(foodX, foodY, 0.0f);
+    glVertex3f(foodX, foodY, 0.1f);
+
+    glVertex3f(foodX + width, foodY, 0.1f);
+    glVertex3f(foodX + width, foodY, 0.0f);
+    glVertex3f(foodX, foodY, 0.0f);
+    glVertex3f(foodX, foodY, 0.1f);
+
+    glVertex3f(foodX + width, foodY + height, 0.1f);
+    glVertex3f(foodX + width, foodY + height, 0.0f);
+    glVertex3f(foodX, foodY + height, 0.0f);
+    glVertex3f(foodX, foodY + height, 0.1f);
+
+    glEnd();
+
+    glColor3f(255.0f, 0.0f, 0.0f);
+    glBegin(GL_QUADS);
+
+    glVertex3f(playerx + width, playery + height, 0.0f);
+    glVertex3f(playerx + width, playery, 0.0f);
+    glVertex3f(playerx, playery, 0.0f);
+    glVertex3f(playerx, playery + height, 0.0f);
+
+    glVertex3f(playerx + width, playery + height, 0.01f);
+    glVertex3f(playerx + width, playery, 0.1f);
+    glVertex3f(playerx, playery, 0.1f);
+    glVertex3f(playerx, playery + height, 0.1f);
+
+    glVertex3f(playerx + width, playery + height, 0.1f);
+    glVertex3f(playerx + width, playery + height, 0.0f);
+    glVertex3f(playerx + width, playery, 0.0f);
+    glVertex3f(playerx + width, playery, 0.1f);
+
+    glVertex3f(playerx, playery + height, 0.1f);
+    glVertex3f(playerx, playery + height, 0.0f);
+    glVertex3f(playerx, playery, 0.0f);
+    glVertex3f(playerx, playery, 0.1f);
+
+    glVertex3f(playerx + width, playery, 0.1f);
+    glVertex3f(playerx + width, playery, 0.0f);
+    glVertex3f(playerx, playery, 0.0f);
+    glVertex3f(playerx, playery, 0.1f);
+
+    glVertex3f(playerx + width, playery + height, 0.1f);
+    glVertex3f(playerx + width, playery + height, 0.0f);
+    glVertex3f(playerx, playery + height, 0.0f);
+    glVertex3f(playerx, playery + height, 0.1f);
+
     glEnd();
 //    glBegin(GL_QUADS);
 //    glVertex3f(0.1f, 0.1f, -5.0f);
@@ -220,5 +381,7 @@ renderData render(renderData rdata)
 void clean()
 {
     glutLeaveMainLoop();
+    glutDestroyWindow(win);
+    glutExit();
     return ;
 }
