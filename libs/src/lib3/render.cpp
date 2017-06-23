@@ -31,7 +31,7 @@ void initialize(renderData rdata)
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 
     glewInit();
-    if (!GLEW_VERSION_3_3)
+    if (!GLEW_VERSION_2_1)
     {
         std::cerr << "OpenGL 3.3 not available" << std::endl;
         exit(1);
@@ -173,7 +173,7 @@ void renderScreen()
     glTranslatef(-1.0f, -1.0f, 0.0f);
     //glRotatef(40.0f, 0.0f, 1.0f, 0.0f);
     glRotatef(2.0f, 0.0f, 0.0f, 1.0f);
-    glRotatef(25.0f, 0.0f, 1.0f, 0.0f);
+    glRotatef(15.0f, 0.0f, 1.0f, 0.0f);
 
     float width;
     width = 2;

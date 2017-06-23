@@ -7,10 +7,6 @@
 
 #include "../../../includes/nibbler.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 //library code goes here
 #ifdef _WIN32
 __declspec(dllexport) void initialize(renderData rdata);
@@ -23,10 +19,6 @@ void initialize(renderData rdata);
 renderData render(renderData rdata);
 void clean();
 
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 //struct data

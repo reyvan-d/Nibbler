@@ -11,30 +11,33 @@ set(
 )
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 set(CMAKE_PREFIX_PATH "~/")
-set(CMAKE_CXX_FLAGS "-std=c++11")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -stdlib=libc++")
 
-#Windows1
-set(SDL2_INCLUDE_DIR "C:/SDL/i686-w64-mingw32/include/SDL2")
-set(SDL2_LIBRARY "C:/SDL/i686-w64-mingw32/lib/libSDL2.a")
+#Windows
+#set(SDL2_INCLUDE_DIR "C:/SDL/i686-w64-mingw32/include/SDL2")
+#set(SDL2_LIBRARY "C:/SDL/i686-w64-mingw32/lib/libSDL2.a")
 
-set(SFML_INCLUDE_DIR "C:/SFML/include")
-find_package(SFML REQUIRED network audio graphics window system)
+#set(SFML_INCLUDE_DIR "C:/SFML/include")
+#find_package(SFML REQUIRED network audio graphics window system)
 
-set(GLEW_INCLUDE_DIR "C:/GLEW/include")
-set(GLEW_STATIC_LIBRARY "C:/GLEW/lib/Win32/glew32.lib")
-set(FREEGLUT_INCLUDE_DIR "C:/FreeGlut/include")
-set(GLEW_LIBRARY "C:/GLEW/bin/Release/Win32/glew32.dll")
-set(FREEGLUT_LIBRARY "C:/FreeGlut/lib/libfreeglut.a")
+#set(GLEW_INCLUDE_DIR "C:/GLEW/include")
+#set(GLEW_STATIC_LIBRARY "C:/GLEW/lib/Win32/glew32.lib")
+#set(FREEGLUT_INCLUDE_DIR "C:/FreeGlut/include")
+#set(GLEW_LIBRARY "C:/GLEW/bin/Release/Win32/glew32.dll")
+#set(FREEGLUT_LIBRARY "C:/FreeGlut/lib/libfreeglut.a")
 
 
 #OSX
-#set(SDL2_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/SDL2")
-#set(SDL2_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libSDL2.dylib")
+set(SDL2_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/SDL2")
+set(SDL2_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libSDL2.dylib")
 
-#set(GLEW_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/GL")
-#set(GLFW_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/GLFW")
-#set(GLEW_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libGLEW.dylib")
-#set(GLFW_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libglfw.dylib")
+set(SFML_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include")
+#find_package(SFML REQUIRED graphics window system)
+
+set(GLEW_INCLUDE_DIR "/nfs/zfs-student-6/users/reyvan-d/.brew/include/GL")
+set(FREEGLUT_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libglut.dylib")
+set(GLEW_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libGLEW.dylib")
 
 #Linux
 #set(SDL2_INCLUDE_DIR "/usr/include/SDL2")
@@ -47,7 +50,7 @@ file(GLOB LIBS1 "libs/src/lib1/*.cpp")
 file(GLOB LIBS2 "libs/src/lib2/*.cpp")
 file(GLOB LIBS3 "libs/src/lib3/*.cpp")
 add_library(lib1 SHARED ${LIBS1} libs/src/lib1/render.cpp libs/src/lib1/lib1.h libs/src/lib1/cleanup.h)
-add_library(lib2 SHARED ${LIBS2} libs/src/lib2/lib2.h)
+add_library(lib2 SHARED ${LIBS2} libs/src/lib2/lib2.h libs/src/lib2/featured_renderer.h)
 add_library(lib3 SHARED ${LIBS3} libs/src/lib3/lib3.h)
 
 set(LINK_LIB1 lib1)
@@ -59,14 +62,17 @@ file(GLOB SOURCES "src/*.cpp")
 add_executable(nibbler ${SOURCES})
 
 #Windows
-target_link_libraries(${LINK_LIB1} ${SDL2_LIBRARY} mingw32 m dinput8 dxguid dxerr8 user32 winmm imm32 ole32 oleaut32 shell32 version uuid)
-target_link_libraries(${LINK_LIB2} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
-target_link_libraries(${LINK_LIB3} ${FREEGLUT_LIBRARY} ${GLEW_LIBRARY} ${GLEW_STATIC_LIBRARY} "-lopengl32 -lglu32 -lWs2_32 -lole32 -lcomctl32 -lgdi32 -lcomdlg32 -luuid")
+#target_link_libraries(${LINK_LIB1} ${SDL2_LIBRARY} mingw32 m dinput8 dxguid dxerr8 user32 winmm imm32 ole32 oleaut32 shell32 version uuid)
+#target_link_libraries(${LINK_LIB2} ${SFML_LIBRARIES} ${SFML_DEPENDENCIES})
+#target_link_libraries(${LINK_LIB3} ${FREEGLUT_LIBRARY} ${GLEW_LIBRARY} ${GLEW_STATIC_LIBRARY} "-lopengl32 -lglu32 -lWs2_32 -lole32 -lcomctl32 -lgdi32 -lcomdlg32 -luuid")
 
 #OSX
-#target_link_libraries(${LINK_LIB1} ${SDL2_LIBRARY})
-#target_link_libraries(${LINK_LIB1} ${SDL2_GFX_LIBRARY})
-#target_link_libraries(${LINK_LIB3} ${GLEW_LIBRARY} ${GLFW_LIBRARY} "-framework OpenGL")
+target_link_libraries(${LINK_LIB1} ${SDL2_LIBRARY})
+target_link_libraries(${LINK_LIB1} ${SDL2_GFX_LIBRARY})
+target_link_libraries(${LINK_LIB2} /nfs/zfs-student-6/users/reyvan-d/.brew/Cellar/sfml/2.4.2/lib/libsfml-graphics.2.4.2.dylib)
+target_link_libraries(${LINK_LIB2} /nfs/zfs-student-6/users/reyvan-d/.brew/Cellar/sfml/2.4.2/lib/libsfml-window.2.4.2.dylib)
+target_link_libraries(${LINK_LIB2} /nfs/zfs-student-6/users/reyvan-d/.brew/Cellar/sfml/2.4.2/lib/libsfml-system.2.4.2.dylib)
+target_link_libraries(${LINK_LIB3} ${GLEW_LIBRARY} ${FREEGLUT_LIBRARY} "-framework OpenGL")
 
 #if (SFML_FOUND)
 #target_link_libraries(${LINK_LIB2} ${SFML_LIBRARIES})

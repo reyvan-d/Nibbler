@@ -6,9 +6,8 @@
 #define LIB3_H
 
 #include "../../../includes/nibbler.h"
-#include <GL/glew.h>
-#include <GL/gl.h>
-#include <GL/freeglut.h>
+#include <glew.h>
+#include <freeglut.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,6 +24,11 @@ extern "C" {
     __declspec(dllexport) void clean();
 #else
     void initialize(renderData rdata);
+    void LoadTextureRAW(GLuint texture, const char *filename, int wrap, int width, int height);
+    void renderScreen();
+    void handleResize(int w, int h);
+    void handleKeypress(unsigned char key, int x, int y);
+    void specialInput(int key, int x, int y);
     renderData render(renderData rdata);
     void clean();
 #endif

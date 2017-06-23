@@ -252,23 +252,36 @@ int main(int ac, char * av[])
 
         }
 
-//        while(engine->getLib() == 2)
-//        {
-//            if (engine->getKey() != 2 && engine->getKey() != 0) {
-//                if (engine->getKey() == 1 || engine->getKey() == 3)
-//                {
-//                    unloadLib(engine);
-//                    engine->setLibHandle(loadLib(engine->getKey()));
-//                    engine->setLib(engine->getKey());
-//                    engine->setKey(0);
-//                }
-//            }
-//            else
-//            {
-//                rdata = update(engine, player, food);
-//                engine->setKey(0);
-//            }
-//        }
+        while(engine->getLib() == 3)
+        {
+            #ifdef _WIN32
+                Sleep(50);
+            #else
+                usleep(50000);
+            #endif
+            if (!engine->getLib3())
+            {
+                rdata.key = 0;
+                initializeRenderer(engine);
+                engine->setLib3(true);
+            }
+            if (rdata.key != 3 && rdata.key != 0) {
+                if (rdata.key == 1 || rdata.key == 2)
+                {
+                    destroyInstance(engine);
+                    engine->setLib3(false);
+                    engine->setLibHandle(loadLib(rdata.key));
+                    engine->setLib(rdata.key);
+                }
+            }
+            else
+            {
+                rdata = update(engine, player, food);
+                rdata.dir = false;
+                player->setXDirection(rdata.playerXDirection);
+                player->setYDirection(rdata.playerYDirection);
+            }
+        }
 
         while(engine->getLib() == 3)
         {

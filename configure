@@ -1,0 +1,4 @@
+brew install SDL2;
+brew install sfml;
+brew install GLEW;
+brew install freeglut;
