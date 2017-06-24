@@ -6,8 +6,8 @@
 #define LIB3_H
 
 #include "../../../includes/nibbler.h"
-#include <glew.h>
-#include <freeglut.h>
+#include <GL/glew.h>
+#include <GL/freeglut.h>
 
 #ifdef __cplusplus
 extern "C" {

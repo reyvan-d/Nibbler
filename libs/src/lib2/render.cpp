@@ -5,6 +5,7 @@
 #include "lib2.h"
 
 featured_renderer *renderer;
+
 //sf::RenderWindow window(sf::VideoMode(640, 480), "Nibbler");
 //sf::Texture texture;
 //sf::Texture advanced_texture[3];
@@ -13,6 +14,7 @@ featured_renderer *renderer;
 
 void         initialize(renderData rdata)
 {
+   // sf::RenderWindow window(sf::VideoMode(640, 480), "Nibbler");
         featured_renderer *new_renderer = new featured_renderer();
 
         renderer = new_renderer;
@@ -25,30 +27,32 @@ void          clean()
 
 renderData    simple_rendering(renderData rdata)
 {
-    static float        n[2];
+    //static float        n[2];
     int                 x = 0;
     int                 xrenderdir = rdata.playerXDirection;//1 * (rdata.playerBody[x - 1][0]);
     int                 yrenderdir = rdata.playerYDirection;
 
-    sf::CircleShape     shape(rdata.objWidth / 2);//original
+    //sf::CircleShape     shape(rdata.objWidth / 2);//original
     sf::Sprite          background;
     sf::Sprite          rfood;//fd
     sf::Sprite          scoreMenuBox;//scorebox
     sf::Sprite          snake_skull;//snake_skull
 
-    if (n[0] > 0.05 || n[0] < -0.05)
-        renderer->setbackground_movement_direction(-renderer->getbackground_movement_direction());
-    if (!(n[0] > 2.0f && !(n[0] = 0)))
-        n[0] += 0.001 * static_cast<float>(renderer->getbackground_movement_direction());//
+//    if (n[0] > 0.05 || n[0] < -0.05)
+//        renderer->setbackground_movement_direction(-renderer->getbackground_movement_direction());
+//    if (!(n[0] > 2.0f && !(n[0] = 0)))
+//        n[0] += 0.001 * static_cast<float>(renderer->getbackground_movement_direction());//
     renderer->setbodyswivel(-renderer->getbodyswivel());
     rfood.setTexture(renderer->getfood_textures()[renderer->getfood()]);//changes int here.
     rfood.setScale(0.09f, 0.09f);
     snake_skull.setTexture(renderer->getsnake_head_textures()[renderer->getsnake_head()]);//semi-constant
     snake_skull.setScale(sf::Vector2f(0.05f, 0.05f));//constant
     snake_skull.rotate(-90 * (rdata.playerXDirection != 0));
+
     background.setTexture(renderer->getbg_textures()[renderer->getbackground()]);//semi-const
-    background.setScale(sf::Vector2f(0.5f + n[0] * 0.75, 0.5f + n[0] * 0.75));//constant
-    background.rotate(n[0] * 10);
+    background.setScale(sf::Vector2f(0.5f, 0.5f));//constant
+//    background.rotate(n[0] * 10);
+
     scoreMenuBox.setTexture(renderer->getbg_textures()[renderer->getbackground()]);//is not yet fully calculated.
     scoreMenuBox.setColor(sf::Color(0, 0, 255, 255 * 0.8f));
     scoreMenuBox.move(rdata.winWidth - 160, 0);//to change-up.(CURRENTLY HARDCODED).
@@ -56,7 +60,7 @@ renderData    simple_rendering(renderData rdata)
     //render shit here.
     renderer->getwindow()->clear();
     renderer->getwindow()->draw(background);//texture
-    renderer->getwindow()->draw(scoreMenuBox);
+//    renderer->getwindow()->draw(scoreMenuBox);
 
     //shape.setFillColor(sf::Color(125, 125, 125));
     //shape.move(rdata.playerPosX * rdata.objWidth, rdata.playerPosY * rdata.objHeight);
@@ -68,7 +72,8 @@ renderData    simple_rendering(renderData rdata)
         sf::Sprite          snake_body;
         sf::CircleShape     bodyshape(rdata.objWidth / 2);
 
-        x > 0 && (xrenderdir = -(rdata.playerBody[x - 1][0] < rdata.playerBody[x][0]) + (rdata.playerBody[x - 1][0] > rdata.playerBody[x][0]));
+        if (x > 0)
+            xrenderdir = -(rdata.playerBody[x - 1][0] < rdata.playerBody[x][0]) + (rdata.playerBody[x - 1][0] > rdata.playerBody[x][0]);
         int                 xswivel = ((i % 3 == 0) ? -renderer->getbodyswivel() : renderer->getbodyswivel()) * (!xrenderdir);//rdata.playerXDirection);
         int                 yswivel = ((i % 3 == 0) ? -renderer->getbodyswivel() : renderer->getbodyswivel()) * (!yrenderdir);//rdata.playerYDirection);
 
@@ -91,11 +96,13 @@ renderData    simple_rendering(renderData rdata)
 //    food.setFillColor(sf::Color(125, 255, 125));
 //    food.move(rdata.foodPosX * rdata.objWidth, rdata.foodPosY * rdata.objHeight);
 //    window.draw(food);
+
     return (rdata);
 }
 
 renderData     render(renderData rdata)
 {
+
     sf::Event           event;
 
     if (!renderer->getwindow()->isOpen())
@@ -117,6 +124,8 @@ renderData     render(renderData rdata)
                     rdata.key = 1;
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3))
                     rdata.key = 3;
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape))
+                    rdata.key = 0;
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
                 {
                     std::cout << "left\n";
@@ -159,6 +168,7 @@ renderData     render(renderData rdata)
             }
         }
     }
+
     std::cout << "lib2 running" << rdata.key << std::endl;
     return (rdata);
 }

@@ -6,13 +6,22 @@
 #define LIB1_H
 
 #include "../../../includes/nibbler.h"
+#include <SDL.h>
+
+#ifdef __cplusplus
+extern "C"
+{
+    #ifdef _WIN32
+    __declspec(dllexport) void initialize(renderData rdata);
+    __declspec(dllexport) renderData render(renderData rdata);
+    __declspec(dllexport) void clean();
+    #endif
+}
+#endif
 
 //library code goes here
-#ifdef _WIN32
-__declspec(dllexport) void initialize(renderData rdata);
-__declspec(dllexport) renderData render(renderData rdata);
-__declspec(dllexport) void clean();
-#else
+
+#ifndef _WIN32
 
 //Add exported functions for OSX
 void initialize(renderData rdata);

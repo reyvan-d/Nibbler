@@ -1,7 +1,6 @@
 //
 // Created by Reyno VAN DER WESTHUIZEN on 2017/06/09.
 //
-#include <SDL.h>
 #include "lib1.h"
 #include "cleanup.h"
 
@@ -45,17 +44,6 @@ void initialize(renderData rdata)
         SDL_Quit();
         return;
     }
-    SDL_RenderClear(ren);
-    SDL_RenderCopy(ren, tex, NULL, NULL);
-    SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
-    SDL_Rect r;
-    r.x = rdata.playerPosX * rdata.objWidth;
-    // r.x = (480 / 2) - (rdata.objWidth / 2);
-    r.y = rdata.playerPosY * rdata.objHeight;
-    r.w = rdata.objWidth;
-    r.h = rdata.objHeight;
-    SDL_RenderFillRect(ren, &r);
-    SDL_RenderPresent(ren);
 }
 
 void clean()
@@ -139,11 +127,14 @@ renderData render(renderData rdata)
                             rdata.dir = true;
                         }
                         break;
+                    case SDLK_2:
+                        rdata.key = 2;
+                        break;
                     case SDLK_3:
                         rdata.key = 3;
                         break;
                     case SDLK_ESCAPE:
-                        clean();
+                        rdata.key = 0;
                         break;
                 }
         }

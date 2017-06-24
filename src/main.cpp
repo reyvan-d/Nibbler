@@ -81,6 +81,15 @@ void destroyInstance(Engine * engine)
     unloadLib(engine);
 }
 
+void exitGame(Engine * engine, Player * player, Food * food)
+{
+    destroyInstance(engine);
+    delete food;
+    delete player;
+    delete engine;
+    exit(0);
+}
+
 renderData update(Engine* engine, Player * player, Food * food)
 {
     renderData (*fn)(renderData);
@@ -121,8 +130,7 @@ renderData update(Engine* engine, Player * player, Food * food)
         if (player->getPosX() == rdata.playerBody[x][y] && player->getPosY() == rdata.playerBody[x][y + 1])
         {
             std::cout << "YOU DIED" << std::endl;
-            destroyInstance(engine);
-            exit(0);
+            exitGame(engine, player, food);
         }
         temp2[0] = rdata.playerBody[x][y];
         rdata.playerBody[x][y] = temp[0];
@@ -147,9 +155,8 @@ renderData update(Engine* engine, Player * player, Food * food)
     }
     if (rdata.playerPosX < 0 || rdata.playerPosX > engine->getWindow()->getObjWidth() - 1 || rdata.playerPosY < 0 || rdata.playerPosY > engine->getWindow()->getObjHeight() - 1)
     {
-        destroyInstance(engine);
         std::cout << "YOU DIED" << std::endl;
-        exit(0);
+        exitGame(engine, player, food);
     }
     rdata = (*fn)(rdata);
     return rdata;
@@ -210,6 +217,7 @@ int main(int ac, char * av[])
     height = atoi(av[2]);
     rdata.ac = ac;
     rdata.av = av;
+    rdata.key = 1;
     Engine * engine = new Engine(width, height, width/2, height/2);
     Player * player = new Player(width/2, height/2);
     Food * food = new Food();
@@ -245,11 +253,45 @@ int main(int ac, char * av[])
             else
             {
                 rdata = update(engine, player, food);
+                if (rdata.key == 0)
+                    exitGame(engine, player, food);
                 rdata.dir = false;
                 player->setXDirection(rdata.playerXDirection);
                 player->setYDirection(rdata.playerYDirection);
             }
 
+        }
+
+        while(engine->getLib() == 2)
+        {
+            #ifdef _WIN32
+                Sleep(50);
+            #else
+                usleep(50000);
+            #endif
+            if (!engine->getLib2())
+            {
+                initializeRenderer(engine);
+                engine->setLib2(true);
+            }
+            if (rdata.key != 2 && rdata.key != 0) {
+                if (rdata.key == 1 || rdata.key == 3)
+                {
+                    destroyInstance(engine);
+                    engine->setLib2(false);
+                    engine->setLibHandle(loadLib(rdata.key));
+                    engine->setLib(rdata.key);
+                }
+            }
+            else
+            {
+                rdata = update(engine, player, food);
+                if (rdata.key == 0)
+                    exitGame(engine, player, food);
+                rdata.dir = false;
+                player->setXDirection(rdata.playerXDirection);
+                player->setYDirection(rdata.playerYDirection);
+            }
         }
 
         while(engine->getLib() == 3)
@@ -261,7 +303,6 @@ int main(int ac, char * av[])
             #endif
             if (!engine->getLib3())
             {
-                rdata.key = 0;
                 initializeRenderer(engine);
                 engine->setLib3(true);
             }
@@ -277,37 +318,8 @@ int main(int ac, char * av[])
             else
             {
                 rdata = update(engine, player, food);
-                rdata.dir = false;
-                player->setXDirection(rdata.playerXDirection);
-                player->setYDirection(rdata.playerYDirection);
-            }
-        }
-
-        while(engine->getLib() == 3)
-        {
-            #ifdef _WIN32
-                Sleep(50);
-            #else
-                usleep(50000);
-            #endif
-            if (!engine->getLib3())
-            {
-                rdata.key = 0;
-                initializeRenderer(engine);
-                engine->setLib3(true);
-            }
-            if (rdata.key != 3 && rdata.key != 0) {
-                if (rdata.key == 1 || rdata.key == 2)
-                {
-                    destroyInstance(engine);
-                    engine->setLib3(false);
-                    engine->setLibHandle(loadLib(rdata.key));
-                    engine->setLib(rdata.key);
-                }
-            }
-            else
-            {
-                rdata = update(engine, player, food);
+                if (rdata.key == 0)
+                    exitGame(engine, player, food);
                 rdata.dir = false;
                 player->setXDirection(rdata.playerXDirection);
                 player->setYDirection(rdata.playerYDirection);

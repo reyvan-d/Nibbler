@@ -13,12 +13,13 @@
 class featured_renderer
 {
     private:
+
     sf::RenderWindow *window;
 
-    char            **backgrounds;
-    char            **snake_skins;
-    char            **snake_heads;
-    char            **snake_foods;
+//    char            **backgrounds;
+//    char            **snake_skins;
+//    char            **snake_heads;
+//    char            **snake_foods;
 
     int              food;//tells which food
     int              snake;//tells which snake
@@ -26,7 +27,7 @@ class featured_renderer
     int              background;//tells which background
 
     int              bodyswivel;
-    int              swivel_intensity;
+//    int              swivel_intensity;
     int              background_movement_direction;//forward or backwards
 
     sf::Texture      *bg_textures;
@@ -44,8 +45,8 @@ class featured_renderer
     void                setbodyswivel(int bs_data);
     int                 getbackground_movement_direction(void);
     void                setbackground_movement_direction(int direction);
-    int                 getswivelintensity(void);
-    void                setswivelintensity(int bs_data);
+//    int                 getswivelintensity(void);
+//    void                setswivelintensity(int bs_data);
     int                 getbackground(void);
     void                setbackground(int bg_data);
     int                 getsnake(void);
@@ -63,4 +64,5 @@ class featured_renderer
     sf::Texture         *&getsnake_head_textures(void);
     void                setsnake_head_textures(sf::Texture *sh_data);
 };
+
 #endif //NIBBLER_FEATURED_RENDERER_H
