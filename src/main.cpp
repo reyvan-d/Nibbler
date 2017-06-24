@@ -35,11 +35,11 @@ void    *loadLib(int key)//linux
 
 //        lib_handle = dlopen(((std::string)"libs/liblib" + std::to_string(key) + (std::string)".so").c_str(), RTLD_LAZY);//works
         if (key == 1)
-            lib_handle = dlopen("libs/liblib1.dylib", RTLD_LAZY);//lib_handle = LoadLibrary(TEXT("liblib1.dll"));
+            lib_handle = dlopen("libs/liblib1.so", RTLD_LAZY);//lib_handle = LoadLibrary(TEXT("liblib1.dll"));
         if (key == 2)
-            lib_handle = dlopen("libs/liblib2.dylib", RTLD_LAZY);//lib_handle = LoadLibrary(TEXT("liblib2.dll"));
+            lib_handle = dlopen("libs/liblib2.so", RTLD_LAZY);//lib_handle = LoadLibrary(TEXT("liblib2.dll"));
         if (key == 3)
-            lib_handle = dlopen("libs/liblib3.dylib", RTLD_LAZY);//lib_handle = LoadLibrary(TEXT("liblib3.dll"));
+            lib_handle = dlopen("libs/liblib3.so", RTLD_LAZY);//lib_handle = LoadLibrary(TEXT("liblib3.dll"));
         if (!lib_handle)
         {
             std::cerr << dlerror() << std::endl;
@@ -148,6 +148,7 @@ renderData update(Engine* engine, Player * player, Food * food)
     rdata.playerPosY = player->getPosY();
     if (food->getVisible() && player->getPosX() == food->getPosX() && player->getPosY() == food->getPosY())
     {
+        rdata.score += 100;
         food->setVisible(false);
         rdata.playerBody.push_back(std::vector<int>(2));
         rdata.playerBody[rdata.playerBody.size() - 1][0] = rdata.playerBody[rdata.playerBody.size() - 2][0];
@@ -158,6 +159,8 @@ renderData update(Engine* engine, Player * player, Food * food)
         std::cout << "YOU DIED" << std::endl;
         exitGame(engine, player, food);
     }
+    rdata.score++;
+    player->setscore(rdata.score);
     rdata = (*fn)(rdata);
     return rdata;
 }
@@ -217,6 +220,7 @@ int main(int ac, char * av[])
     height = atoi(av[2]);
     rdata.ac = ac;
     rdata.av = av;
+    rdata.score = 0;
     rdata.key = 1;
     Engine * engine = new Engine(width, height, width/2, height/2);
     Player * player = new Player(width/2, height/2);
@@ -267,7 +271,7 @@ int main(int ac, char * av[])
             #ifdef _WIN32
                 Sleep(50);
             #else
-                usleep(50000);
+                usleep(100000);
             #endif
             if (!engine->getLib2())
             {
@@ -299,7 +303,7 @@ int main(int ac, char * av[])
             #ifdef _WIN32
                 Sleep(50);
             #else
-                usleep(50000);
+                usleep(100000);
             #endif
             if (!engine->getLib3())
             {

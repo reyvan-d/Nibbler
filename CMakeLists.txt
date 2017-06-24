@@ -39,7 +39,7 @@ set(FREEGLUT_LIBRARY "C:/FreeGlut/lib/libfreeglut.a")
 #set(GLEW_LIBRARY "/nfs/zfs-student-6/users/reyvan-d/.brew/lib/libGLEW.dylib")
 
 #Linux
-#set(SDL2_INCLUDE_DIR "/usr/include/SDL2")
+# set(SDL2_INCLUDE_DIR "/usr/include/SDL2")
 
 
 include_directories(includes ${SDL2_INCLUDE_DIR} ${SFML_INCLUDE_DIR} ${GLEW_INCLUDE_DIR} ${FREEGLUT_INCLUDE_DIR})
@@ -79,6 +79,9 @@ target_link_libraries(${LINK_LIB3} ${FREEGLUT_LIBRARY} ${GLEW_LIBRARY} ${GLEW_ST
 #Linux
 #target_link_libraries(nibbler dl)
 #target_link_libraries(${LINK_LIB1} SDL2)
+#target_link_libraries(${LINK_LIB2} sfml-graphics sfml-window sfml-system)
+#target_link_libraries(${LINK_LIB2} lGLEW )
+
 
 #Generic
 #target_link_libraries(nibbler ${SDL2_LIBRARY})

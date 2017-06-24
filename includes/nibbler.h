@@ -43,6 +43,7 @@ struct renderData
     int playerYDirection;
     int foodPosX;
     int foodPosY;
+    int score;
     int key;
     int ac;
     char ** av;

@@ -122,7 +122,7 @@ featured_renderer::featured_renderer(void)
 
 //    const  int          no_backgrounds = countdirelements("./textures/lib2/backgrounds/", "all"), no_food = countdirelements("./textures/lib2/food/", "all"), no_snake = countdirelements("./textures/lib2/snake/", "all"), no_snake_head = countdirelements("./textures/lib2/snake_head/", "all");
 //
-//    this->background_movement_direction = -1;//zoom in z
+    this->background_movement_direction = -1;//zoom in z
 //    this->backgrounds = getdirelements("./textures/lib2/backgrounds/");
 //    this->snake_foods = getdirelements("./textures/lib2/food/");
 //    this->snake_skins = getdirelements("./textures/lib2/snake/");
@@ -144,10 +144,10 @@ featured_renderer::featured_renderer(void)
 //    this->snake_head = -1;
 //    this->background = -1;
 
+    this->food = -1;
+    this->snake = -1;
     this->background = -1;
     this->snake_head = -1;
-    this->snake = -1;
-    this->food = -1;
     this->food_textures = new sf::Texture[no_food];
     this->snake_textures = new sf::Texture[no_snake];
     this->bg_textures = new sf::Texture[no_backgrounds];
