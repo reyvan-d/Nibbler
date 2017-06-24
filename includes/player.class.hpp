@@ -25,9 +25,13 @@ class Player : public Entity {
         void setPosY(int posY);
         void setXDirection(int dirX);
         void setYDirection(int dirY);
+    void    setscore(int score);
+    int     getscore();
+
     private:
         int xDirection;
         int yDirection;
+        int score;
         std::vector<Entity> bodyPart;
 };
 

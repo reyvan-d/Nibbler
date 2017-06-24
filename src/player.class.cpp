@@ -79,3 +79,13 @@ std::vector<Entity> Player::getBody()
 {
     return this->bodyPart;
 }
+
+int     Player::getscore()
+{
+    return (this->score);
+}
+
+void    Player::setscore(int score)
+{
+    this->score = score;
+}

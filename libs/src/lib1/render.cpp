@@ -1,6 +1,7 @@
 //
 // Created by Reyno VAN DER WESTHUIZEN on 2017/06/09.
 //
+#include <SDL.h>
 #include "lib1.h"
 #include "cleanup.h"
 
@@ -44,6 +45,7 @@ void initialize(renderData rdata)
         SDL_Quit();
         return;
     }
+    SDL_RenderPresent(ren);
 }
 
 void clean()
@@ -134,7 +136,7 @@ renderData render(renderData rdata)
                         rdata.key = 3;
                         break;
                     case SDLK_ESCAPE:
-                        rdata.key = 0;
+                        clean();
                         break;
                 }
         }
